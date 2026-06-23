@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — Работа и бизнес</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 14px 18px 12px 18px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .screen::-webkit-scrollbar {
+            display: none;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 30px;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateX(-3px);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Календарь */
+        .calendar-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 16px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .calendar-month {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFD966;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 16px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            margin-bottom: 8px;
+            color: #8e8e9e;
+            font-size: 11px;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            cursor: pointer;
+        }
+
+        .calendar-day.has-note {
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD966;
+        }
+
+        .calendar-day.selected {
+            background: rgba(255, 215, 0, 0.3);
+            border: 1px solid #FFD966;
+        }
+
+        /* Заметки */
+        .notes-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 16px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .notes-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+
+        .note-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 14px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .note-text {
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .note-time {
+            font-size: 10px;
+            color: #aaa;
+            margin-top: 4px;
+        }
+
+        .note-delete {
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .add-note {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .add-note input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .add-note button {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 8px 16px;
+            color: #FFD966;
+            cursor: pointer;
+        }
+
+        /* Стратегические цели */
+        .goals-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 16px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .goal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .goal-name {
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .goal-status {
+            font-size: 12px;
+            color: #FFD966;
+            cursor: pointer;
+        }
+
+        .add-goal {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .add-goal input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .add-goal select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            padding: 8px;
+            color: #FFD966;
+            font-size: 11px;
+        }
+
+        .small-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 6px 12px;
+            font-size: 11px;
+            color: #FFD966;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="section-header">
+                <div class="back-btn" onclick="location.href='index.html'">←</div>
+                <div class="section-title">Работа и бизнес</div>
+            </div>
+
+            <!-- Календарь -->
+            <div class="calendar-card">
+                <div class="calendar-header">
+                    <span class="calendar-month" id="monthYear"></span>
+                    <div class="calendar-nav">
+                        <span id="prevMonth">◀</span>
+                        <span id="nextMonth">▶</span>
+                    </div>
+                </div>
+                <div class="weekdays">
+                    <span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span><span>ПТ</span><span>СБ</span><span>ВС</span>
+                </div>
+                <div class="calendar-days" id="calendarDays"></div>
+            </div>
+
+            <!-- Заметки на выбранный день -->
+            <div class="notes-card">
+                <div class="notes-title">📝 Заметки на <span id="selectedDate"></span></div>
+                <div id="notesList"></div>
+                <div class="add-note">
+                    <input type="text" id="noteText" placeholder="Что нужно сделать?">
+                    <input type="time" id="noteTime" style="width: 80px;">
+                    <button id="addNoteBtn">+</button>
+                </div>
+            </div>
+
+            <!-- Стратегические цели -->
+            <div class="goals-card">
+                <div class="notes-title">🎯 Стратегические цели</div>
+                <div id="goalsList"></div>
+                <div class="add-goal">
+                    <input type="text" id="goalText" placeholder="Новая цель">
+                    <select id="goalPeriod">
+                        <option value="1m">1 месяц</option>
+                        <option value="3m">3 месяца</option>
+                        <option value="1y">1 год</option>
+                        <option value="3y">3 года</option>
+                        <option value="5y">5 лет</option>
+                        <option value="10y">10 лет</option>
+                        <option value="20y">20 лет</option>
+                    </select>
+                    <button id="addGoalBtn" class="small-btn">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let selectedDay = new Date();
+        let notes = {};
+        let goals = {};
+
+        function loadData() {
+            const savedNotes = localStorage.getItem('focus_business_notes');
+            if (savedNotes) notes = JSON.parse(savedNotes);
+            const savedGoals = localStorage.getItem('focus_business_goals');
+            if (savedGoals) goals = JSON.parse(savedGoals);
+            else {
+                goals = {
+                    '1m': { text: 'Запустить лендинг', completed: false },
+                    '3m': { text: 'Найти 3 клиентов', completed: false },
+                    '1y': { text: 'Выйти на 300 000 ₽', completed: false },
+                    '3y': { text: 'Собрать команду', completed: false },
+                    '5y': { text: 'Пассивный доход', completed: false },
+                    '10y': { text: 'Купить дом', completed: false },
+                    '20y': { text: 'Передать бизнес', completed: false }
+                };
+            }
+            renderCalendar();
+            renderNotes();
+            renderGoals();
+        }
+
+        function saveNotes() {
+            localStorage.setItem('focus_business_notes', JSON.stringify(notes));
+        }
+
+        function saveGoals() {
+            localStorage.setItem('focus_business_goals', JSON.stringify(goals));
+        }
+
+        function getDateKey(date) {
+            return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        }
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const startDay = firstDay.getDay() || 7;
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            document.getElementById('monthYear').innerText = `${firstDay.toLocaleString('ru', { month: 'long' })} ${year}`;
+
+            const container = document.getElementById('calendarDays');
+            container.innerHTML = '';
+
+            for (let i = 1; i < startDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-day';
+                container.appendChild(empty);
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const day = new Date(year, month, d);
+                const key = getDateKey(day);
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                if (notes[key] && notes[key].length > 0) dayDiv.classList.add('has-note');
+                if (selectedDay && getDateKey(selectedDay) === key) dayDiv.classList.add('selected');
+                dayDiv.innerText = d;
+                dayDiv.addEventListener('click', () => {
+                    selectedDay = day;
+                    renderCalendar();
+                    renderNotes();
+                });
+                container.appendChild(dayDiv);
+            }
+        }
+
+        function renderNotes() {
+            const key = getDateKey(selectedDay);
+            const dayNotes = notes[key] || [];
+            const container = document.getElementById('notesList');
+            container.innerHTML = '';
+            dayNotes.forEach((note, idx) => {
+                const div = document.createElement('div');
+                div.className = 'note-item';
+                div.innerHTML = `
+                    <div><div class="note-text">${escapeHtml(note.text)}</div><div class="note-time">⏰ ${note.time || 'без времени'}</div></div>
+                    <div class="note-delete" data-idx="${idx}">🗑️</div>
+                `;
+                container.appendChild(div);
+            });
+            document.getElementById('selectedDate').innerText = selectedDay.toLocaleDateString('ru-RU');
+
+            document.querySelectorAll('.note-delete').forEach(el => {
+                el.addEventListener('click', () => {
+                    const idx = parseInt(el.dataset.idx);
+                    notes[key].splice(idx, 1);
+                    if (notes[key].length === 0) delete notes[key];
+                    saveNotes();
+                    renderCalendar();
+                    renderNotes();
+                });
+            });
+        }
+
+        function renderGoals() {
+            const container = document.getElementById('goalsList');
+            container.innerHTML = '';
+            const periods = [
+                { key: '1m', name: '1 месяц' }, { key: '3m', name: '3 месяца' }, { key: '1y', name: '1 год' },
+                { key: '3y', name: '3 года' }, { key: '5y', name: '5 лет' }, { key: '10y', name: '10 лет' }, { key: '20y', name: '20 лет' }
+            ];
+            periods.forEach(period => {
+                const goal = goals[period.key];
+                if (goal) {
+                    const div = document.createElement('div');
+                    div.className = 'goal-item';
+                    div.innerHTML = `
+                        <span class="goal-name">${period.name}: ${escapeHtml(goal.text)}</span>
+                        <span class="goal-status" data-period="${period.key}">${goal.completed ? '✅' : '○'}</span>
+                    `;
+                    container.appendChild(div);
+                } else {
+                    const div = document.createElement('div');
+                    div.className = 'goal-item';
+                    div.innerHTML = `<span class="goal-name">${period.name}: —</span><span class="goal-status" data-period="${period.key}">➕</span>`;
+                    container.appendChild(div);
+                }
+            });
+            document.querySelectorAll('.goal-status').forEach(el => {
+                el.addEventListener('click', () => {
+                    const period = el.dataset.period;
+                    if (goals[period] && goals[period].text) {
+                        goals[period].completed = !goals[period].completed;
+                        saveGoals();
+                        renderGoals();
+                    } else {
+                        const newText = prompt('Введите цель:');
+                        if (newText && newText.trim()) {
+                            goals[period] = { text: newText.trim(), completed: false };
+                            saveGoals();
+                            renderGoals();
+                        }
+                    }
+                });
+            });
+        }
+
+        document.getElementById('addNoteBtn').addEventListener('click', () => {
+            const text = document.getElementById('noteText').value.trim();
+            const time = document.getElementById('noteTime').value;
+            if (!text) return;
+            const key = getDateKey(selectedDay);
+            if (!notes[key]) notes[key] = [];
+            notes[key].push({ text, time });
+            saveNotes();
+            document.getElementById('noteText').value = '';
+            document.getElementById('noteTime').value = '';
+            renderCalendar();
+            renderNotes();
+            if (time) {
+                const [hour, minute] = time.split(':');
+                const now = new Date();
+                const reminder = new Date(selectedDay);
+                reminder.setHours(parseInt(hour), parseInt(minute), 0, 0);
+                if (reminder > now) {
+                    const delay = reminder - now;
+                    setTimeout(() => {
+                        alert(`🔔 Напоминание: ${text} в ${time}`);
+                    }, delay);
+                } else if (getDateKey(selectedDay) === getDateKey(now) && reminder > now) {
+                    const delay = reminder - now;
+                    setTimeout(() => alert(`🔔 Напоминание: ${text} в ${time}`), delay);
+                }
+            }
+        });
+
+        document.getElementById('addGoalBtn').addEventListener('click', () => {
+            const text = document.getElementById('goalText').value.trim();
+            const period = document.getElementById('goalPeriod').value;
+            if (text) {
+                goals[period] = { text, completed: false };
+                saveGoals();
+                renderGoals();
+                document.getElementById('goalText').value = '';
+            }
+        });
+
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — Кабинет предсказателя</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen {
+            flex: 1;
+            padding: 12px 16px 10px 16px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+            scrollbar-width: none;
+        }
+        .screen::-webkit-scrollbar { display: none; }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .back-btn {
+            font-size: 22px; cursor: pointer; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,215,0,0.08); border-radius: 30px;
+        }
+        .title {
+            font-size: 18px; font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .btn-sm {
+            background: rgba(255,215,0,0.08);
+            border: 0.5px solid rgba(255,215,0,0.2);
+            border-radius: 30px;
+            padding: 6px 12px;
+            color: #FFD966;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .btn-sm:active { transform: scale(0.97); }
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .scroll-area::-webkit-scrollbar { display: none; }
+
+        .balance-card {
+            background: rgba(30,30,42,0.5);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .balance-amount { font-size: 22px; font-weight: 700; color: #FFD966; }
+
+        .section-title { font-size: 13px; font-weight: 600; color: #FFD966; margin: 8px 0 4px 0; }
+
+        .order-card {
+            background: rgba(30,30,42,0.5);
+            border-radius: 14px;
+            padding: 10px;
+            margin-bottom: 6px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+        }
+        .order-header { display: flex; justify-content: space-between; align-items: center; }
+        .order-name { font-size: 13px; font-weight: 500; color: #fff; }
+        .order-price { font-size: 12px; color: #FFD966; }
+        .order-question { font-size: 11px; color: #aaa; margin: 4px 0; }
+        .order-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+        .order-time { font-size: 10px; color: #6e6e7e; }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin: 6px 0;
+        }
+        .category-check {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #aaa;
+            cursor: pointer;
+        }
+        .category-check input[type="checkbox"] {
+            accent-color: #FFD966;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .category-check .checked-label { color: #FFD966; }
+        .empty-state { text-align: center; padding: 20px; color: #6e6e7e; font-size: 12px; }
+        .warning { font-size: 10px; color: #ff4444; margin-top: 4px; }
+
+        /* Модалка ответа */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1a1a24;
+            border-radius: 24px;
+            width: 340px;
+            padding: 20px;
+            border: 0.5px solid rgba(255,215,0,0.2);
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        .modal-title { font-size: 16px; font-weight: 600; color: #FFD966; margin-bottom: 12px; text-align: center; }
+        .modal textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 0.5px solid rgba(255,215,0,0.2);
+            border-radius: 16px;
+            padding: 10px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            resize: none;
+            min-height: 60px;
+            font-family: inherit;
+            margin: 6px 0;
+        }
+        .modal input[type="number"] {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 0.5px solid rgba(255,215,0,0.2);
+            border-radius: 16px;
+            padding: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            margin: 6px 0;
+        }
+        .modal-btn {
+            background: rgba(255,215,0,0.15);
+            border: 0.5px solid rgba(255,215,0,0.3);
+            border-radius: 30px;
+            padding: 10px;
+            text-align: center;
+            color: #FFD966;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .modal-btn:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="header-left">
+                    <div class="back-btn" onclick="location.href='index.html'">←</div>
+                    <div class="title">🧙‍♂️ Кабинет</div>
+                </div>
+                <div class="btn-sm" id="logoutBtn">🚪 Выйти</div>
+            </div>
+
+            <div class="scroll-area">
+                <div class="balance-card">
+                    <div>
+                        <div style="font-size: 11px; color: #aaa;">💰 Баланс</div>
+                        <div class="balance-amount" id="psychicBalance">0</div>
+                    </div>
+                    <div class="btn-sm" id="withdrawBtn">💳 Вывести</div>
+                </div>
+
+                <div class="section-title">📋 Мои категории (до 3)</div>
+                <div class="category-grid" id="categoryGrid"></div>
+                <div class="warning" id="categoryWarning"></div>
+
+                <div class="section-title">📋 Новые заявки</div>
+                <div id="pendingRequests"></div>
+
+                <div class="section-title">✅ Выполненные заказы</div>
+                <div id="completedOrders"></div>
+
+                <div class="section-title">⚙️ Мои услуги</div>
+                <div id="servicesList"></div>
+                <div class="btn-sm" id="addServiceBtn" style="margin: 4px 0;">➕ Добавить услугу</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка ответа на заявку -->
+    <div id="answerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">💬 Ответ на заявку</div>
+            <div style="font-size: 12px; color: #aaa; margin-bottom: 4px;">👤 <span id="modalUserName">Александр</span></div>
+            <div style="font-size: 11px; color: #666; margin-bottom: 8px;">📝 "<span id="modalUserQuestion">...</span>"</div>
+            <div style="font-size: 12px; color: #aaa; margin: 4px 0;">💰 Назначьте цену (мин. 100 монет):</div>
+            <input type="number" id="modalPrice" value="300" min="100">
+            <div style="font-size: 12px; color: #aaa; margin: 4px 0;">💬 Предварительный ответ:</div>
+            <textarea id="modalAnswer" placeholder="Напишите предварительный ответ..."></textarea>
+            <div class="modal-btn" id="submitAnswerBtn">📤 ОТПРАВИТЬ ПРЕДЛОЖЕНИЕ</div>
+            <div class="modal-btn" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #aaa; margin-top: 4px;" id="closeModalBtn">Отмена</div>
+        </div>
+    </div>
+
+    <script>
+        const categories = [
+            { id: 'tarot', label: 'Таролог' },
+            { id: 'astrology', label: 'Астролог' },
+            { id: 'numerology', label: 'Нумеролог' },
+            { id: 'lead_pour', label: 'Отлив свинцом' },
+            { id: 'runes', label: 'Рунолог' },
+            { id: 'palmistry', label: 'Хиромант' },
+            { id: 'clairvoyant', label: 'Ясновидящий' },
+            { id: 'shaman', label: 'Шаман' }
+        ];
+
+        let psychic = {
+            name: 'Мария Таролог',
+            balance: 1200,
+            categories: ['tarot', 'astrology'],
+            services: [
+                { id: 1, name: 'Расклад "Что меня ждёт"', price: 500 },
+                { id: 2, name: 'Расклад "Отношения"', price: 350 }
+            ]
+        };
+
+        // Загружаем заявки из localStorage
+        function loadRequests() {
+            return JSON.parse(localStorage.getItem('focus_oracle_requests') || '[]');
+        }
+
+        function saveRequests(requests) {
+            localStorage.setItem('focus_oracle_requests', JSON.stringify(requests));
+        }
+
+        function renderCategories() {
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = '';
+            categories.forEach(cat => {
+                const isChecked = psychic.categories.includes(cat.id);
+                const div = document.createElement('div');
+                div.className = 'category-check';
+                div.innerHTML = `
+                    <input type="checkbox" id="cat_${cat.id}" ${isChecked ? 'checked' : ''} data-id="${cat.id}">
+                    <label for="cat_${cat.id}" ${isChecked ? 'class="checked-label"' : ''}>${cat.label}</label>
+                `;
+                grid.appendChild(div);
+            });
+            document.querySelectorAll('.category-check input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const id = this.dataset.id;
+                    const checked = this.checked;
+                    if (checked && psychic.categories.length >= 3) {
+                        this.checked = false;
+                        document.getElementById('categoryWarning').innerText = '❌ Вы можете выбрать максимум 3 категории';
+                        return;
+                    }
+                    document.getElementById('categoryWarning').innerText = '';
+                    if (checked) {
+                        psychic.categories.push(id);
+                    } else {
+                        psychic.categories = psychic.categories.filter(c => c !== id);
+                    }
+                    const label = this.nextElementSibling;
+                    if (this.checked) label.classList.add('checked-label');
+                    else label.classList.remove('checked-label');
+                    localStorage.setItem('psychic_categories', JSON.stringify(psychic.categories));
+                });
+            });
+        }
+
+        function renderRequests() {
+            const container = document.getElementById('pendingRequests');
+            const requests = loadRequests();
+            const pending = requests.filter(r => r.status === 'pending');
+            if (pending.length === 0) {
+                container.innerHTML = '<div class="empty-state">Нет новых заявок</div>';
+                return;
+            }
+            container.innerHTML = '';
+            pending.forEach(r => {
+                const div = document.createElement('div');
+                div.className = 'order-card';
+                div.innerHTML = `
+                    <div class="order-header">
+                        <span class="order-name">👤 ${r.psychicName}</span>
+                        <span class="order-price">⏳ Ожидает</span>
+                    </div>
+                    <div class="order-question">📝 "${r.question.substring(0, 60)}${r.question.length > 60 ? '...' : ''}"</div>
+                    <div class="order-footer">
+                        <span class="order-time">📅 ${new Date(r.createdAt).toLocaleDateString()}</span>
+                        <span class="btn-sm" style="padding:2px 10px;" data-id="${r.id}">💬 Ответить</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            document.querySelectorAll('#pendingRequests .btn-sm').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    const request = loadRequests().find(r => r.id === id);
+                    if (request) {
+                        openAnswerModal(request);
+                    }
+                });
+            });
+        }
+
+        function renderCompleted() {
+            const container = document.getElementById('completedOrders');
+            const requests = loadRequests();
+            const completed = requests.filter(r => r.status === 'completed');
+            if (completed.length === 0) {
+                container.innerHTML = '<div class="empty-state">Нет выполненных заказов</div>';
+                return;
+            }
+            container.innerHTML = '';
+            completed.forEach(r => {
+                const div = document.createElement('div');
+                div.className = 'order-card';
+                div.innerHTML = `
+                    <div class="order-header">
+                        <span class="order-name">👤 ${r.psychicName}</span>
+                        <span class="order-price">✅ ${r.price || 0} монет</span>
+                    </div>
+                    <div class="order-question">📝 "${r.question.substring(0, 60)}${r.question.length > 60 ? '...' : ''}"</div>
+                    <div class="order-footer">
+                        <span class="order-time">📅 ${new Date(r.createdAt).toLocaleDateString()}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderServices() {
+            const container = document.getElementById('servicesList');
+            if (psychic.services.length === 0) {
+                container.innerHTML = '<div class="empty-state">Нет добавленных услуг</div>';
+                return;
+            }
+            container.innerHTML = '';
+            psychic.services.forEach(service => {
+                const div = document.createElement('div');
+                div.className = 'order-card';
+                div.innerHTML = `
+                    <div class="order-header">
+                        <span class="order-name">${service.name}</span>
+                        <span class="order-price">💰 ${service.price} монет</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updateBalance() {
+            document.getElementById('psychicBalance').innerText = psychic.balance;
+        }
+
+        // ===== МОДАЛКА ОТВЕТА =====
+        let currentRequestId = null;
+
+        function openAnswerModal(request) {
+            currentRequestId = request.id;
+            document.getElementById('modalUserName').innerText = request.psychicName;
+            document.getElementById('modalUserQuestion').innerText = request.question.substring(0, 100);
+            document.getElementById('modalPrice').value = 300;
+            document.getElementById('modalAnswer').value = '';
+            document.getElementById('answerModal').style.display = 'flex';
+        }
+
+        document.getElementById('submitAnswerBtn').addEventListener('click', function() {
+            const price = parseInt(document.getElementById('modalPrice').value);
+            const answer = document.getElementById('modalAnswer').value.trim();
+            if (!price || price < 100) {
+                alert('❌ Назначьте цену (минимум 100 монет)');
+                return;
+            }
+            if (!answer) {
+                alert('❌ Напишите предварительный ответ');
+                return;
+            }
+            const requests = loadRequests();
+            const idx = requests.findIndex(r => r.id === currentRequestId);
+            if (idx !== -1) {
+                requests[idx].status = 'price_set';
+                requests[idx].price = price;
+                requests[idx].preliminaryAnswer = answer;
+                saveRequests(requests);
+                alert('✅ Предложение отправлено пользователю!');
+                document.getElementById('answerModal').style.display = 'none';
+                renderRequests();
+                renderCompleted();
+            }
+        });
+
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            document.getElementById('answerModal').style.display = 'none';
+        });
+        document.getElementById('answerModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) document.getElementById('answerModal').style.display = 'none';
+        });
+
+        // ===== ОБРАБОТЧИКИ =====
+        document.getElementById('addServiceBtn').addEventListener('click', () => {
+            const name = prompt('Название услуги:');
+            if (!name) return;
+            const price = parseInt(prompt('Цена в монетах:'));
+            if (!price || price < 10) return;
+            psychic.services.push({ id: Date.now(), name, price });
+            renderServices();
+            alert('✅ Услуга добавлена!');
+        });
+
+        document.getElementById('withdrawBtn').addEventListener('click', () => {
+            if (psychic.balance < 500) {
+                alert('❌ Минимальная сумма вывода — 500 монет');
+                return;
+            }
+            const amount = parseInt(prompt(`💰 Ваш баланс: ${psychic.balance} монет\nВведите сумму для вывода (мин. 500):`));
+            if (!amount || amount < 500 || amount > psychic.balance) {
+                alert('❌ Неверная сумма');
+                return;
+            }
+            psychic.balance -= amount;
+            updateBalance();
+            alert(`✅ Запрос на вывод ${amount} монет отправлен!`);
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm('Выйти из кабинета?')) window.location.href = 'index.html';
+        });
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        const savedCategories = localStorage.getItem('psychic_categories');
+        if (savedCategories) psychic.categories = JSON.parse(savedCategories);
+
+        renderCategories();
+        renderRequests();
+        renderCompleted();
+        renderServices();
+        updateBalance();
+    </script>
+</body>
+</html>

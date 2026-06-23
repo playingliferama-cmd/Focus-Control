@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen {
+            flex: 1;
+            padding: 12px 0 0 0;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+        }
+        .admin-header {
+            padding: 0 16px 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 0.5px solid rgba(255,215,0,0.1);
+        }
+        .admin-title { font-size: 18px; font-weight: 700; color: #FFD966; }
+        .admin-user { font-size: 12px; color: #8e8e9e; display: flex; align-items: center; gap: 8px; }
+        .admin-user span { color: #FFD966; }
+        .admin-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        /* Боковое меню */
+        .sidebar {
+            width: 60px;
+            background: rgba(30,30,42,0.3);
+            padding: 8px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            overflow-y: auto;
+            scrollbar-width: none;
+            border-right: 0.5px solid rgba(255,215,0,0.08);
+        }
+        .sidebar::-webkit-scrollbar { display: none; }
+        .sidebar-item {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            color: #6e6e7e;
+            border: 0.5px solid transparent;
+        }
+        .sidebar-item:hover { background: rgba(255,215,0,0.05); color: #FFD966; }
+        .sidebar-item.active {
+            background: rgba(255,215,0,0.1);
+            color: #FFD966;
+            border-color: rgba(255,215,0,0.2);
+        }
+        .sidebar-label {
+            font-size: 6px;
+            color: #6e6e7e;
+            text-align: center;
+            line-height: 1.1;
+            margin-top: 2px;
+        }
+
+        /* Контент */
+        .content {
+            flex: 1;
+            padding: 10px 14px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .content::-webkit-scrollbar { display: none; }
+        .content-title { font-size: 16px; font-weight: 600; color: #FFD966; margin-bottom: 8px; }
+
+        /* Карточки дашборда */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .stat-card {
+            background: rgba(30,30,42,0.5);
+            border-radius: 14px;
+            padding: 10px;
+            text-align: center;
+            border: 0.5px solid rgba(255,215,0,0.08);
+        }
+        .stat-number { font-size: 20px; font-weight: 700; color: #FFD966; }
+        .stat-label { font-size: 9px; color: #8e8e9e; margin-top: 2px; }
+
+        /* Таблицы */
+        .table-wrap {
+            background: rgba(30,30,42,0.3);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 0.5px solid rgba(255,215,0,0.08);
+            margin-bottom: 8px;
+        }
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 0.8fr 0.6fr;
+            padding: 6px 10px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.04);
+            font-size: 10px;
+            align-items: center;
+            gap: 4px;
+        }
+        .table-row.header { color: #8e8e9e; font-weight: 600; font-size: 9px; background: rgba(0,0,0,0.2); }
+        .table-row:last-child { border-bottom: none; }
+        .table-row .name { color: #fff; }
+        .table-row .status {
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .status-pending { background: rgba(255,193,7,0.2); color: #FFC107; }
+        .status-approved { background: rgba(76,175,80,0.2); color: #4CAF50; }
+        .status-rejected { background: rgba(255,68,68,0.2); color: #ff4444; }
+        .status-active { background: rgba(76,175,80,0.2); color: #4CAF50; }
+        .status-blocked { background: rgba(255,68,68,0.2); color: #ff4444; }
+        .btn-action {
+            background: rgba(255,215,0,0.1);
+            border: 0.5px solid rgba(255,215,0,0.2);
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 8px;
+            color: #FFD966;
+            cursor: pointer;
+        }
+        .btn-action:hover { background: rgba(255,215,0,0.2); }
+        .btn-danger { border-color: rgba(255,68,68,0.3); color: #ff4444; }
+        .btn-danger:hover { background: rgba(255,68,68,0.2); }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <!-- Шапка -->
+            <div class="admin-header">
+                <div class="admin-title">🔥 FOCUS ADMIN</div>
+                <div class="admin-user">👤 <span>Admin</span></div>
+            </div>
+
+            <div class="admin-body">
+                <!-- Боковое меню -->
+                <div class="sidebar">
+                    <div class="sidebar-item active" data-tab="dashboard" title="Главная">📊</div>
+                    <div class="sidebar-item" data-tab="users" title="Пользователи">👥</div>
+                    <div class="sidebar-item" data-tab="requests" title="Заявки">📨</div>
+                    <div class="sidebar-item" data-tab="psychics" title="Предсказатели">🧙</div>
+                    <div class="sidebar-item" data-tab="orders" title="Заказы">📋</div>
+                    <div class="sidebar-item" data-tab="finance" title="Финансы">💰</div>
+                    <div class="sidebar-item" data-tab="settings" title="Настройки">⚙️</div>
+                </div>
+
+                <!-- Контент -->
+                <div class="content" id="contentArea">
+                    <!-- Дашборд -->
+                    <div id="tab-dashboard" class="tab-content">
+                        <div class="content-title">📊 Дашборд</div>
+                        <div class="stats-grid">
+                            <div class="stat-card"><div class="stat-number">12 345</div><div class="stat-label">👥 Пользователи</div></div>
+                            <div class="stat-card"><div class="stat-number">456 789 ₽</div><div class="stat-label">💰 Доход</div></div>
+                            <div class="stat-card"><div class="stat-number">23%</div><div class="stat-label">📈 Рост MAU</div></div>
+                            <div class="stat-card"><div class="stat-number">4.8</div><div class="stat-label">⭐ Рейтинг</div></div>
+                        </div>
+                        <div class="table-wrap">
+                            <div class="table-row header"><span>Событие</span><span>Кто</span><span>Время</span><span>Статус</span></div>
+                            <div class="table-row"><span class="name">Купил «Элита»</span><span>Иван П.</span><span>14:32</span><span class="status status-approved">✅</span></div>
+                            <div class="table-row"><span class="name">Жалоба</span><span>Мария С.</span><span>13:15</span><span class="status status-pending">⚠️</span></div>
+                            <div class="table-row"><span class="name">Заявка на роль</span><span>Анна К.</span><span>12:40</span><span class="status status-pending">📨</span></div>
+                        </div>
+                        <div style="font-size:10px;color:#8e8e9e;">🚨 3 заявки ожидают, 2 жалобы, 5 запросов на вывод</div>
+                    </div>
+
+                    <!-- Пользователи -->
+                    <div id="tab-users" class="tab-content hidden">
+                        <div class="content-title">👥 Пользователи</div>
+                        <div class="table-wrap">
+                            <div class="table-row header"><span>Имя</span><span>Email</span><span>Подписка</span><span>Действие</span></div>
+                            <div class="table-row"><span class="name">Александр</span><span>alex@mail.ru</span><span>Элита</span><span><span class="btn-action">✏️</span> <span class="btn-action btn-danger">🚫</span></span></div>
+                            <div class="table-row"><span class="name">Мария</span><span>maria@mail.ru</span><span>Боец</span><span><span class="btn-action">✏️</span> <span class="btn-action btn-danger">🚫</span></span></div>
+                            <div class="table-row"><span class="name">Иван</span><span>ivan@mail.ru</span><span>Новичок</span><span><span class="btn-action">✏️</span> <span class="btn-action btn-danger">🚫</span></span></div>
+                        </div>
+                        <div style="font-size:10px;color:#8e8e9e;">🔍 Поиск по имени или email</div>
+                    </div>
+
+                    <!-- Заявки -->
+                    <div id="tab-requests" class="tab-content hidden">
+                        <div class="content-title">📨 Заявки на роль</div>
+                        <div class="table-wrap">
+                            <div class="table-row header"><span>Имя</span><span>Категория</span><span>Статус</span><span>Действие</span></div>
+                            <div class="table-row"><span class="name">Анна К.</span><span>Таролог</span><span class="status status-pending">⏳ Ожидает</span><span><span class="btn-action">✅</span> <span class="btn-action btn-danger">❌</span></span></div>
+                            <div class="table-row"><span class="name">Сергей М.</span><span>Астролог</span><span class="status status-pending">⏳ Ожидает</span><span><span class="btn-action">✅</span> <span class="btn-action btn-danger">❌</span></span></div>
+                            <div class="table-row"><span class="name">Елена П.</span><span>Нумеролог</span><span class="status status-approved">✅ Одобрена</span><span></span></div>
+                        </div>
+                    </div>
+
+                    <!-- Предсказатели -->
+                    <div id="tab-psychics" class="tab-content hidden">
+                        <div class="content-title">🧙 Предсказатели</div>
+                        <div class="table-wrap">
+                            <div class="table-row header"><span>Имя</span><span>Категория</span><span>Баланс</span><span>Статус</span></div>
+                            <div class="table-row"><span class="name">Мария Т.</span><span>Таролог</span><span>1 200</span><span class="status status-active">🟢 Активен</span></div>
+                            <div class="table-row"><span class="name">Анна А.</span><span>Астролог</span><span>850</span><span class="status status-active">🟢 Активен</span></div>
+                            <div class="table-row"><span class="name">Виктория Н.</span><span>Нумеролог</span><span>0</span><span class="status status-blocked">🔴 Заблокирован</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Заказы -->
+                    <div id="tab-orders" class="tab-content hidden">
+                        <div class="content-title">📋 Заказы</div>
+                        <div class="table-wrap">
+                            <div class="table-row header"><span>Пользователь</span><span>Услуга</span><span>Цена</span><span>Статус</span></div>
+                            <div class="table-row"><span class="name">Александр</span><span>Расклад Таро</span><span>500</span><span class="status status-pending">⏳ В работе</span></div>
+                            <div class="table-row"><span class="name">Елена</span><span>Астрология</span><span>350</span><span class="status status-approved">✅ Завершён</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Финансы -->
+                    <div id="tab-finance" class="tab-content hidden">
+                        <div class="content-title">💰 Финансы</div>
+                        <div class="stats-grid">
+                            <div class="stat-card"><div class="stat-number">456 789 ₽</div><div class="stat-label">Доход</div></div>
+                            <div class="stat-card"><div class="stat-number">12 345</div><div class="stat-label">Подписчиков</div></div>
+                        </div>
+                        <div class="table-wrap">
+                            <div class="table-row header"><span>Исполнитель</span><span>Сумма</span><span>Статус</span><span>Действие</span></div>
+                            <div class="table-row"><span class="name">Мария Т.</span><span>500</span><span class="status status-pending">⏳ Ожидает</span><span><span class="btn-action">✅</span> <span class="btn-action btn-danger">❌</span></span></div>
+                            <div class="table-row"><span class="name">Анна А.</span><span>300</span><span class="status status-approved">✅ Выплачено</span><span></span></div>
+                        </div>
+                    </div>
+
+                    <!-- Настройки -->
+                    <div id="tab-settings" class="tab-content hidden">
+                        <div class="content-title">⚙️ Настройки</div>
+                        <div style="font-size:12px;color:#aaa;margin-bottom:8px;">Комиссия: <span style="color:#FFD966;">50%</span></div>
+                        <div style="font-size:12px;color:#aaa;margin-bottom:8px;">Мин. вывод: <span style="color:#FFD966;">500 монет</span></div>
+                        <div style="font-size:12px;color:#aaa;margin-bottom:8px;">Бонус за друга: <span style="color:#FFD966;">50 монет</span></div>
+                        <div style="font-size:12px;color:#aaa;">Подписки: <span style="color:#FFD966;">333 / 555 / 777 ₽</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                const tab = this.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                const target = document.getElementById('tab-' + tab);
+                if (target) target.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — Нумерология</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen {
+            flex: 1;
+            padding: 12px 16px 10px 16px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+            scrollbar-width: none;
+        }
+        .screen::-webkit-scrollbar { display: none; }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .back-btn {
+            font-size: 22px; cursor: pointer; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,215,0,0.08); border-radius: 30px;
+        }
+        .title {
+            font-size: 20px; font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .scroll-area::-webkit-scrollbar { display: none; }
+
+        .input-card {
+            background: rgba(30,30,42,0.5);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+        }
+        .input-label { font-size: 12px; color: #aaa; margin-bottom: 4px; }
+        .input-field {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 0.5px solid rgba(255,215,0,0.2);
+            border-radius: 20px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            margin-top: 4px;
+        }
+        .input-field::placeholder { color: #6e6e7e; }
+
+        .card {
+            background: rgba(30,30,42,0.5);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+        }
+        .card-title { font-size: 14px; font-weight: 600; color: #FFD966; margin-bottom: 6px; }
+        .card-text { font-size: 13px; color: #fff; line-height: 1.5; }
+
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 6px 0;
+        }
+        .number-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 8px;
+            text-align: center;
+        }
+        .number-item .num { font-size: 28px; font-weight: 700; color: #FFD966; }
+        .number-item .label { font-size: 10px; color: #aaa; }
+
+        .btn-sm {
+            background: rgba(255,215,0,0.08);
+            border: 0.5px solid rgba(255,215,0,0.2);
+            border-radius: 30px;
+            padding: 8px;
+            text-align: center;
+            color: #FFD966;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+        .btn-sm:active { transform: scale(0.97); }
+        .btn-sm.paid { background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.4); }
+
+        .compat-input { width: 100%; background: rgba(0,0,0,0.3); border: 0.5px solid rgba(255,215,0,0.2); border-radius: 20px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; margin-top: 6px; }
+        .compat-result { margin-top: 8px; padding: 8px 12px; background: rgba(0,0,0,0.3); border-radius: 12px; border-left: 2px solid #FFD966; }
+        .compat-result .pct { font-size: 20px; font-weight: 700; color: #FFD966; }
+        .compat-result .desc { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1a1a24;
+            border-radius: 24px;
+            width: 340px;
+            padding: 20px;
+            border: 0.5px solid rgba(255,215,0,0.2);
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        .modal-title { font-size: 18px; font-weight: 600; color: #FFD966; text-align: center; margin-bottom: 12px; }
+        .history-item { padding: 8px 0; border-bottom: 0.5px solid rgba(255,255,255,0.05); }
+        .history-item .date { font-size: 11px; color: #8e8e9e; }
+        .history-item .text { font-size: 11px; color: #fff; margin: 2px 0; }
+        .modal-btn {
+            text-align: center;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.06);
+            color: #aaa;
+            margin-top: 12px;
+        }
+        .modal-btn:hover { background: rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='index.html'">←</div>
+                <div class="title">🔢 Нумерология</div>
+            </div>
+
+            <div class="scroll-area">
+                <!-- Ввод данных -->
+                <div class="input-card">
+                    <div class="input-label">📅 Дата рождения</div>
+                    <input type="date" class="input-field" id="birthDate">
+                    <div style="height: 8px;"></div>
+                    <div class="input-label">👤 Ваше имя (опционально)</div>
+                    <input type="text" class="input-field" id="fullName" placeholder="Например: Александр">
+                    <div class="btn-sm" id="calculateBtn">🔮 РАССЧИТАТЬ</div>
+                </div>
+
+                <!-- Результат -->
+                <div id="resultContainer" style="display: none;">
+                    <div class="card">
+                        <div class="card-title">🔢 Ваши числа</div>
+                        <div class="numbers-grid" id="numbersGrid"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">📖 Ваша характеристика</div>
+                        <div class="card-text" id="descriptionText"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">📅 Прогноз на 2026 год</div>
+                        <div class="card-text" id="yearlyText"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">🔮 Совместимость по числам (100 F-coins)</div>
+                        <input type="number" class="compat-input" id="compatNumber" placeholder="Введите число судьбы партнёра (1–9, 11, 22, 33)">
+                        <div class="btn-sm paid" id="compatBtn">💳 Узнать</div>
+                        <div class="compat-result" id="compatResult" style="display: none;">
+                            <div class="pct" id="compatPct">75%</div>
+                            <div class="desc" id="compatDesc">Вы отлично дополняете друг друга!</div>
+                        </div>
+                    </div>
+
+                    <div class="btn-sm" id="archiveBtn">📋 Архив</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="archiveModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">📋 Архив нумерологии</div>
+            <div id="archiveList"></div>
+            <div class="modal-btn" id="closeArchiveBtn">Закрыть</div>
+        </div>
+    </div>
+
+    <script>
+        // ===== ДАННЫЕ: описания для чисел 1-9, 11, 22, 33 =====
+        const descriptions = {
+            1: {
+                text: 'Вы — прирожденный лидер. Ваша главная черта — независимость и стремление быть первым во всём. Вы обладаете сильной волей и способностью вести за собой людей. В работе вам подходят управленческие должности, предпринимательство, военная служба. В любви вы ищете партнёра, который будет восхищаться вами и поддерживать ваши амбиции. Однако помните, что иногда ваша прямолинейность может ранить близких. Учитесь слушать и идти на компромиссы. В финансах вам важно научиться не только зарабатывать, но и грамотно тратить. Ваша миссия — вдохновлять других своим примером. В 2026 году вас ждёт важное решение, которое изменит вашу жизнь. Оно будет связано с вашим предназначением. Будьте внимательны к знакам судьбы.',
+                yearly: '2026 год — время для смелых шагов в карьере. Вас ждёт новый проект или повышение. В любви ожидайте перемен, возможно, новое знакомство или переосмысление отношений. Финансово год благоприятен, но избегайте импульсивных трат.'
+            },
+            2: {
+                text: 'Вы — человек дипломатичный и чуткий. Ваша сила — в умении находить общий язык с людьми и сглаживать конфликты. Вы отличный командный игрок, но предпочитаете оставаться в тени, а не на первых ролях. В работе вам подходят профессии, связанные с общением: психология, медиа, HR. В любви вы ищете гармонию и стабильность. Вы способны создать уют и поддерживать партнёра в любых ситуациях. Ваша главная задача — научиться доверять своей интуиции и не бояться отстаивать свои интересы. Финансово вы предпочитаете стабильность, избегая рисков. Ваша миссия — нести мир и гармонию в мир. В 2026 году вас ждёт укрепление отношений и новые возможности для творчества.',
+                yearly: '2026 год — время для гармонии в отношениях. Укрепляйте связи с близкими. В карьере возможны перемены, связанные с командной работой. Финансово — стабильный год, но без резких скачков.'
+            },
+            3: {
+                text: 'Вы — творческая и энергичная личность. Ваша главная черта — оптимизм и умение радоваться жизни. Вы обладаете яркой харизмой и способностью вдохновлять окружающих. В работе вам подходят творческие профессии: искусство, дизайн, маркетинг, шоу-бизнес. В любви вы ищете партнёра, который разделяет вашу страсть к жизни и готов к экспериментам. Вы умеете создавать вокруг себя праздник. Ваша задача — научиться доводить начатое до конца и не распыляться на множество проектов. Финансово у вас часто случаются периоды подъёмов и спадов, но вы всегда находите способ пополнить бюджет. Ваша миссия — дарить радость и вдохновение. В 2026 году вас ждёт яркое событие, которое изменит ваше мировоззрение.',
+                yearly: '2026 год — год творческого взлёта. Вас ждут неожиданные предложения в карьере. В любви — новые эмоции. Финансово — будьте осторожны с крупными вложениями.'
+            },
+            4: {
+                text: 'Вы — человек дисциплинированный и надёжный. Ваша главная черта — практичность и умение строить планы. Вы цените стабильность и предсказуемость. В работе вам подходят инженерные специальности, бухгалтерия, архитектура. В любви вы ищете партнёра, который разделяет ваше стремление к порядку и надёжности. Вы — опора для своей семьи и друзей. Ваша задача — научиться быть более гибким и не бояться перемен. Финансово вы предпочитаете долгосрочные вложения и копите на будущее. Ваша миссия — строить прочные основы для себя и других. В 2026 году вас ждёт укрепление финансового положения и семейные события.',
+                yearly: '2026 год — год стабильности и укрепления позиций. В карьере — признание заслуг. В личной жизни — укрепление отношений. Финансово — отличный год для накоплений.'
+            },
+            5: {
+                text: 'Вы — человек свободы и приключений. Ваша главная черта — любовь к переменам и новым впечатлениям. Вы не боитесь рисковать и легко адаптируетесь к новым условиям. В работе вам подходят профессии, связанные с путешествиями, коммуникацией, торговлей. В любви вы ищете партнёра, который готов к экспериментам и не ограничивает вашу свободу. Вы — душа компании, но иногда вам не хватает глубины в отношениях. Ваша задача — научиться быть более ответственным и завершать начатое. Финансово у вас частые взлёты и падения, но вы всегда выходите сухим из воды. Ваша миссия — приносить новые идеи и вдохновлять других. В 2026 году вас ждут перемены, которые откроют новые горизонты.',
+                yearly: '2026 год — время путешествий и новых знакомств. Карьера: возможна смена деятельности. Финансово — будьте осторожны с крупными тратами.'
+            },
+            6: {
+                text: 'Вы — человек любви и гармонии. Ваша главная черта — забота о других и стремление к красоте. Вы обладаете тонким чувством вкуса и умением создавать уют. В работе вам подходят профессии, связанные с помощью другим: медицина, психология, образование. В любви вы ищете партнёра, с которым можно построить крепкую семью и дом. Вы — идеальный родитель и друг. Ваша задача — научиться уделять время себе и не растворяться полностью в других. Финансово вы предпочитаете тратить на дом и семью, умеете экономить. Ваша миссия — создавать гармонию в этом мире. В 2026 году вас ждут семейные события и укрепление отношений.',
+                yearly: '2026 год — год гармонии в семье и новых творческих проектов. Карьера: возможны новые начинания. Финансово — стабильность.'
+            },
+            7: {
+                text: 'Вы — человек глубокого внутреннего мира. Ваша главная черта — стремление к знаниям и самоанализу. Вы обладаете мощной интуицией и часто предвидите будущее. В работе вам подходят профессии, связанные с исследованием, наукой, философией. В любви вы ищете партнёра, который понимает вашу потребность в одиночестве и готов к глубоким разговорам. Вы предпочитаете доверять разуму, а не чувствам. Ваша задача — научиться доверять людям и не замыкаться в себе. Финансово вы предпочитаете независимость и избегаете долгов. Ваша миссия — познавать истину и делиться знаниями. В 2026 году вас ждут важные открытия и духовный рост.',
+                yearly: '2026 год — год саморазвития и новых знаний. Карьера: переход на новый уровень. Финансово — отложите крупные покупки.'
+            },
+            8: {
+                text: 'Вы — человек власти и материального успеха. Ваша главная черта — амбициозность и умение зарабатывать. Вы обладаете деловой хваткой и способностью видеть возможности там, где другие их не замечают. В работе вам подходят профессии, связанные с бизнесом, финансами, управлением. В любви вы ищете партнёра, который разделяет ваши амбиции и готов строить совместное будущее. Вы — надёжный партнёр, но иногда бываете слишком требовательны. Ваша задача — научиться балансировать между работой и личной жизнью. Финансово вы достигаете высоких результатов, но можете быть слишком рискованными. Ваша миссия — создавать материальные ценности и помогать другим. В 2026 году вас ждёт карьерный взлёт и укрепление финансового положения.',
+                yearly: '2026 год — год карьерного роста и масштабных проектов. Финансово — удачные вложения. В любви — новые горизонты.'
+            },
+            9: {
+                text: 'Вы — человек большой души и гуманизма. Ваша главная черта — сострадание и желание помогать другим. Вы обладаете мудростью и способностью видеть мир в целостности. В работе вам подходят профессии, связанные с благотворительностью, искусством, педагогикой. В любви вы ищете партнёра, который разделяет ваши идеалы и готов к духовной близости. Вы — идеалист, иногда забываете о себе. Ваша задача — научиться принимать мир таким, какой он есть. Финансово вы не слишком привязаны к деньгам, но умеете их привлекать. Ваша миссия — делать мир лучше. В 2026 году вас ждут события, которые заставят вас переосмыслить свою жизнь.',
+                yearly: '2026 год — год перемен и новых начинаний. Карьера: возможна смена деятельности. Финансово — будьте внимательны к долгам.'
+            },
+            11: {
+                text: 'Вы — мастер-число. Вы обладаете особым даром — вы чувствуете мир тоньше других. Ваша главная черта — интуиция и способность видеть за пределами очевидного. В работе вам подходят профессии, связанные с духовностью: астрология, нумерология, психология. В любви вы ищете партнёра, который понимает вашу глубину. Вы — провидец, но иногда эта ноша тяжела для вас. Ваша задача — научиться использовать свой дар во благо. Финансово деньги приходят к вам через помощь другим. Ваша миссия — нести свет знаний. В 2026 году вас ждёт духовное откровение.',
+                yearly: '2026 год — год духовного роста и новых откровений. Карьера: возможны новые направления. Финансово — будьте щедрыми.'
+            },
+            22: {
+                text: 'Вы — мастер-строитель. Вы способны воплощать грандиозные идеи в реальность. Ваша главная черта — практичность и видение будущего. В работе вам подходят масштабные проекты: архитектура, политика, управление. В любви вы ищете партнёра, который разделяет ваши амбиции. Вы — созидатель, но иногда вам не хватает терпения. Ваша задача — научиться доверять другим. Финансово вы создаёте империи. Ваша миссия — строить будущее. В 2026 году вас ждёт реализация большого проекта.',
+                yearly: '2026 год — год реализации масштабных планов. Карьера: новый этап. Финансово — отличные перспективы.'
+            },
+            33: {
+                text: 'Вы — мастер-учитель. Вы обладаете даром исцелять и направлять других. Ваша главная черта — безусловная любовь и сострадание. В работе вам подходят профессии, связанные с помощью другим: медицина, психология, духовное развитие. В любви вы — идеальный партнёр, готовый отдать всё. Вы — образец самоотверженности. Ваша задача — научиться принимать помощь от других. Финансово вы притягиваете деньги через помощь другим. Ваша миссия — нести любовь и свет. В 2026 году вас ждёт важная миссия, связанная с помощью людям.',
+                yearly: '2026 год — год служения и духовного роста. Карьера: новые возможности в помощи другим. Финансово — благоприятный год.'
+            }
+        };
+
+        // Совместимость по числам (база)
+        const compatibilityTexts = {
+            '1-1': { pct: 70, text: 'Два лидера — мощный союз, но нужно учиться уступать.' },
+            '1-2': { pct: 85, text: 'Идеальное дополнение: один ведёт, другой вдохновляет.' },
+            '1-3': { pct: 80, text: 'Яркий и энергичный союз, полный приключений.' },
+            '1-4': { pct: 65, text: 'Сложный союз: один хочет свободы, другой — стабильности.' },
+            '1-5': { pct: 75, text: 'Союз авантюристов — вместе вы свернёте горы!' },
+            '1-6': { pct: 80, text: 'Гармоничный союз: лидер и хранитель домашнего очага.' },
+            '1-7': { pct: 60, text: 'Разные миры: одному нужна глубина, другому — действие.' },
+            '1-8': { pct: 85, text: 'Союз власти и денег — вы можете достичь высот.' },
+            '1-9': { pct: 70, text: 'Союз идеалиста и лидера — нужно найти общий язык.' },
+            '1-11': { pct: 75, text: 'Вдохновляющий союз: лидер и провидец.' },
+            '1-22': { pct: 80, text: 'Союз строителя и лидера — вы создадите империю.' },
+            '1-33': { pct: 70, text: 'Духовный союз: лидер и учитель.' },
+            '2-2': { pct: 90, text: 'Идеальная гармония — вы понимаете друг друга без слов.' },
+            '2-3': { pct: 85, text: 'Союз творчества и дипломатии — вы украшаете мир.' },
+            '2-4': { pct: 80, text: 'Надёжный и гармоничный союз.' },
+            '2-5': { pct: 60, text: 'Дипломату сложно с авантюристом, но возможно.' },
+            '2-6': { pct: 90, text: 'Идеальный семейный союз — вы созданы друг для друга.' },
+            '2-7': { pct: 75, text: 'Глубокий и интеллектуальный союз.' },
+            '2-8': { pct: 70, text: 'Союз дипломата и бизнесмена — можно найти баланс.' },
+            '2-9': { pct: 85, text: 'Союз сердца и ума — вы дополняете друг друга.' },
+            '2-11': { pct: 80, text: 'Духовный союз — вы чувствуете мир одинаково.' },
+            '2-22': { pct: 75, text: 'Союз строителя и дипломата — гармоничный.' },
+            '2-33': { pct: 85, text: 'Союз любви и духовности — благословенный.' },
+            '3-3': { pct: 80, text: 'Два творца — вместе вы создаёте искусство жизни.' },
+            '3-4': { pct: 60, text: 'Творческий человек и практик — нужно искать баланс.' },
+            '3-5': { pct: 85, text: 'Союз свободы и творчества — вы заряжаете друг друга.' },
+            '3-6': { pct: 75, text: 'Творчество и забота о доме — гармоничный союз.' },
+            '3-7': { pct: 65, text: 'Творчество и глубина — интересный, но сложный союз.' },
+            '3-8': { pct: 70, text: 'Творчество и бизнес — вы можете зарабатывать на искусстве.' },
+            '3-9': { pct: 80, text: 'Союз творца и идеалиста — вы меняете мир.' },
+            '3-11': { pct: 85, text: 'Божественный союз творчества и интуиции.' },
+            '3-22': { pct: 70, text: 'Союз творца и строителя — вы можете строить мечты.' },
+            '3-33': { pct: 75, text: 'Союз творчества и любви — вы исцеляете миром.' },
+            '4-4': { pct: 85, text: 'Союз надёжности и стабильности — вы вместе непоколебимы.' },
+            '4-5': { pct: 50, text: 'Сложный союз: стабильность и хаос. Нужны компромиссы.' },
+            '4-6': { pct: 80, text: 'Союз практичности и заботы — идеальная семья.' },
+            '4-7': { pct: 60, text: 'Практичность и глубина — нужно искать общий язык.' },
+            '4-8': { pct: 85, text: 'Союз строителя и бизнесмена — вы создаёте империи.' },
+            '4-9': { pct: 70, text: 'Союз идеалиста и практика — можно найти баланс.' },
+            '4-11': { pct: 75, text: 'Союз строителя и провидца — гармоничный.' },
+            '4-22': { pct: 90, text: 'Союз двух строителей — вы создадите что-то великое.' },
+            '4-33': { pct: 80, text: 'Союз строителя и учителя — вы строете мир.' },
+            '5-5': { pct: 85, text: 'Союз свободы и приключений — вам никогда не будет скучно.' },
+            '5-6': { pct: 65, text: 'Свобода и дом — нужно искать баланс между ними.' },
+            '5-7': { pct: 70, text: 'Приключения и глубина — интересный союз.' },
+            '5-8': { pct: 75, text: 'Союз авантюриста и бизнесмена — вы любите риск.' },
+            '5-9': { pct: 80, text: 'Союз свободы и идеализма — вы меняете мир.' },
+            '5-11': { pct: 85, text: 'Союз свободы и интуиции — вы чувствуете мир.' },
+            '5-22': { pct: 70, text: 'Союз авантюриста и строителя — нужно найти баланс.' },
+            '5-33': { pct: 75, text: 'Союз свободы и любви — вы исцеляете миром.' },
+            '6-6': { pct: 90, text: 'Союз любви и гармонии — вы созданы друг для друга.' },
+            '6-7': { pct: 70, text: 'Забота и глубина — гармоничный союз.' },
+            '6-8': { pct: 75, text: 'Союз любви и бизнеса — можно найти баланс.' },
+            '6-9': { pct: 85, text: 'Союз любви и идеализма — вы исцеляете мир.' },
+            '6-11': { pct: 80, text: 'Божественный союз любви и интуиции.' },
+            '6-22': { pct: 85, text: 'Союз любви и строительства — вы строите мир любви.' },
+            '6-33': { pct: 90, text: 'Союз любви и служения — вы благословенны.' },
+            '7-7': { pct: 85, text: 'Союз глубин и знаний — вы понимаете друг друга.' },
+            '7-8': { pct: 60, text: 'Глубина и бизнес — сложный, но интересный союз.' },
+            '7-9': { pct: 75, text: 'Союз глубин и идеализма — вы меняете мир.' },
+            '7-11': { pct: 90, text: 'Союз двух провидцев — вы знаете больше, чем другие.' },
+            '7-22': { pct: 80, text: 'Союз провидца и строителя — вы создаёте будущее.' },
+            '7-33': { pct: 85, text: 'Союз провидца и учителя — вы несёте свет.' },
+            '8-8': { pct: 85, text: 'Союз власти и денег — вы можете достичь всего.' },
+            '8-9': { pct: 70, text: 'Союз бизнеса и идеализма — можно найти баланс.' },
+            '8-11': { pct: 75, text: 'Союз бизнеса и провидения — вы видите будущее.' },
+            '8-22': { pct: 90, text: 'Союз бизнеса и строительства — вы создаёте империи.' },
+            '8-33': { pct: 80, text: 'Союз бизнеса и любви — вы исцеляете миром.' },
+            '9-9': { pct: 85, text: 'Союз идеалистов — вы меняете мир вместе.' },
+            '9-11': { pct: 80, text: 'Союз идеализма и интуиции — вы видите будущее.' },
+            '9-22': { pct: 75, text: 'Союз идеалиста и строителя — вы строите будущее.' },
+            '9-33': { pct: 90, text: 'Союз идеалиста и учителя — вы несёте свет.' },
+            '11-11': { pct: 90, text: 'Союз двух провидцев — вы связаны на уровне души.' },
+            '11-22': { pct: 85, text: 'Союз провидца и строителя — вы создаёте будущее.' },
+            '11-33': { pct: 90, text: 'Союз провидца и учителя — вы несёте свет.' },
+            '22-22': { pct: 90, text: 'Союз двух строителей — вы создадите что-то великое.' },
+            '22-33': { pct: 85, text: 'Союз строителя и учителя — вы строете мир.' },
+            '33-33': { pct: 90, text: 'Союз двух учителей — вы исцеляете мир вместе.' }
+        };
+
+        let viewCount = 0;
+        let numerologyHistory = [];
+        let currentResult = null;
+
+        function getToday() { return new Date().toISOString().slice(0, 10); }
+
+        function init() {
+            const savedViewCount = localStorage.getItem('focus_numerology_views');
+            const savedHistory = localStorage.getItem('focus_numerology_history');
+            if (savedViewCount) viewCount = parseInt(savedViewCount) || 0;
+            if (savedHistory) numerologyHistory = JSON.parse(savedHistory);
+        }
+
+        function calculateNumbers() {
+            const birthDate = document.getElementById('birthDate').value;
+            const fullName = document.getElementById('fullName').value.trim();
+
+            if (!birthDate) {
+                alert('Введите дату рождения');
+                return;
+            }
+
+            // Проверка на бесплатные просмотры
+            const isFree = viewCount < 3;
+            if (!isFree) {
+                const coins = parseInt(localStorage.getItem('focus_coins')) || 0;
+                if (coins < 20) {
+                    alert('Недостаточно F-coins (нужно 20). Пополните баланс в магазине.');
+                    return;
+                }
+                localStorage.setItem('focus_coins', coins - 20);
+            }
+            viewCount++;
+            localStorage.setItem('focus_numerology_views', viewCount);
+
+            const dateParts = birthDate.split('-');
+            const year = parseInt(dateParts[0]);
+            const month = parseInt(dateParts[1]);
+            const day = parseInt(dateParts[2]);
+
+            // Расчёт чисел
+            const destinyNumber = calculateDestinyNumber(day, month, year);
+            const soulNumber = calculateSoulNumber(day);
+            const missionNumber = calculateMissionNumber(year);
+            let nameNumber = null;
+            if (fullName) {
+                nameNumber = calculateNameNumber(fullName);
+            }
+
+            const result = {
+                date: getToday(),
+                birthDate: birthDate,
+                destinyNumber: destinyNumber,
+                soulNumber: soulNumber,
+                missionNumber: missionNumber,
+                nameNumber: nameNumber,
+                fullName: fullName || 'не указано'
+            };
+
+            // Сохраняем в историю
+            numerologyHistory = numerologyHistory.filter(h => h.date !== getToday());
+            numerologyHistory.push(result);
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            numerologyHistory = numerologyHistory.filter(h => new Date(h.date) >= sevenDaysAgo);
+            localStorage.setItem('focus_numerology_history', JSON.stringify(numerologyHistory));
+
+            currentResult = result;
+            displayResult(result);
+        }
+
+        function calculateDestinyNumber(day, month, year) {
+            let sum = day + month + year;
+            while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+                let digits = sum.toString().split('').map(Number);
+                sum = digits.reduce((a, b) => a + b, 0);
+            }
+            return sum;
+        }
+
+        function calculateSoulNumber(day) {
+            let sum = day;
+            while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+                let digits = sum.toString().split('').map(Number);
+                sum = digits.reduce((a, b) => a + b, 0);
+            }
+            return sum;
+        }
+
+        function calculateMissionNumber(year) {
+            let sum = year;
+            while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+                let digits = sum.toString().split('').map(Number);
+                sum = digits.reduce((a, b) => a + b, 0);
+            }
+            return sum;
+        }
+
+        function calculateNameNumber(name) {
+            const letters = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+            let sum = 0;
+            for (let char of name.toLowerCase()) {
+                const idx = letters.indexOf(char);
+                if (idx !== -1) {
+                    const num = (idx % 9) + 1;
+                    sum += num;
+                }
+            }
+            while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+                let digits = sum.toString().split('').map(Number);
+                sum = digits.reduce((a, b) => a + b, 0);
+            }
+            return sum;
+        }
+
+        function displayResult(result) {
+            const container = document.getElementById('resultContainer');
+            container.style.display = 'block';
+
+            // Числа
+            const grid = document.getElementById('numbersGrid');
+            let html = `
+                <div class="number-item"><div class="num">${result.destinyNumber}</div><div class="label">Число Судьбы</div></div>
+                <div class="number-item"><div class="num">${result.soulNumber}</div><div class="label">Число Души</div></div>
+                <div class="number-item"><div class="num">${result.missionNumber}</div><div class="label">Число Миссии</div></div>
+                <div class="number-item"><div class="num">${result.nameNumber !== null ? result.nameNumber : '—'}</div><div class="label">Число Имени</div></div>
+            `;
+            grid.innerHTML = html;
+
+            // Описание
+            const desc = descriptions[result.destinyNumber];
+            if (desc) {
+                document.getElementById('descriptionText').innerHTML = desc.text;
+                document.getElementById('yearlyText').innerHTML = desc.yearly;
+            } else {
+                document.getElementById('descriptionText').innerHTML = 'Описание для вашего числа пока не готово.';
+                document.getElementById('yearlyText').innerHTML = 'Прогноз пока не готов.';
+            }
+        }
+
+        // ===== СОВМЕСТИМОСТЬ =====
+        document.getElementById('compatBtn').addEventListener('click', function() {
+            const compatNumber = parseInt(document.getElementById('compatNumber').value);
+            if (!compatNumber || isNaN(compatNumber)) {
+                alert('Введите число судьбы партнёра (1–9, 11, 22, 33)');
+                return;
+            }
+            if (!currentResult) {
+                alert('Сначала рассчитайте свою нумерологию');
+                return;
+            }
+
+            const coins = parseInt(localStorage.getItem('focus_coins')) || 0;
+            if (coins < 100) {
+                alert('Недостаточно F-coins (нужно 100). Пополните баланс в магазине.');
+                return;
+            }
+            localStorage.setItem('focus_coins', coins - 100);
+
+            const key1 = currentResult.destinyNumber;
+            const key2 = compatNumber;
+            const key = `${Math.min(key1, key2)}-${Math.max(key1, key2)}`;
+            const compat = compatibilityTexts[key] || { pct: 50, text: 'У вас интересное сочетание чисел. Попробуйте узнать больше!' };
+
+            document.getElementById('compatResult').style.display = 'block';
+            document.getElementById('compatPct').innerHTML = compat.pct + '%';
+            document.getElementById('compatDesc').innerHTML = compat.text;
+        });
+
+        // ===== АРХИВ =====
+        document.getElementById('archiveBtn').addEventListener('click', () => {
+            const list = document.getElementById('archiveList');
+            list.innerHTML = '';
+            if (numerologyHistory.length === 0) {
+                list.innerHTML = '<div style="text-align:center;color:#6e6e7e;padding:20px;">Нет сохранённых расчётов</div>';
+            } else {
+                numerologyHistory.slice().reverse().forEach(h => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    div.innerHTML = `
+                        <div class="date">📅 ${h.date}</div>
+                        <div class="text">Число Судьбы: ${h.destinyNumber}</div>
+                        <div class="text" style="font-size: 10px; color: #aaa;">${h.fullName}</div>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+            document.getElementById('archiveModal').style.display = 'flex';
+        });
+
+        document.getElementById('closeArchiveBtn').addEventListener('click', () => {
+            document.getElementById('archiveModal').style.display = 'none';
+        });
+        document.getElementById('archiveModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) document.getElementById('archiveModal').style.display = 'none';
+        });
+
+        document.getElementById('calculateBtn').addEventListener('click', calculateNumbers);
+
+        init();
+    </script>
+</body>
+</html>

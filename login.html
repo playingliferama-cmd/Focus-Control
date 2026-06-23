@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Вход — FOCUS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            overflow-y: hidden;
+        }
+
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 30px;
+            margin-bottom: 16px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #8e8e9e;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input {
+            width: 100%;
+            background: rgba(30, 30, 42, 0.5);
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 14px 16px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .input:focus {
+            border-color: #FFD966;
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD966, #FFAA33);
+            border: none;
+            border-radius: 40px;
+            padding: 14px;
+            color: #0a0a0f;
+            font-weight: 700;
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .forgot-link {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .forgot-link a {
+            color: #8e8e9e;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .footer-register {
+            text-align: center;
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .footer-register span {
+            color: #8e8e9e;
+            font-size: 13px;
+        }
+
+        .footer-register a {
+            color: #FFD966;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='landing.html'">←</div>
+                <div class="title">Вход</div>
+                <div class="subtitle">Добро пожаловать обратно</div>
+            </div>
+
+            <div class="form-group">
+                <div class="label">📧 Email</div>
+                <input type="email" class="input" id="email" placeholder="your@email.com">
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <div class="label">🔐 Пароль</div>
+                <input type="password" class="input" id="password" placeholder="Ваш пароль">
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <button class="btn-primary" id="loginBtn">➡️ ВОЙТИ</button>
+
+            <div class="forgot-link">
+                <a href="#" id="forgotBtn">❓ Забыли пароль?</a>
+            </div>
+
+            <div class="footer-register">
+                <span>Нет аккаунта?</span>
+                <a href="register.html">Создать</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            document.getElementById('emailError').style.display = 'none';
+            document.getElementById('passwordError').style.display = 'none';
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email) {
+                document.getElementById('emailError').innerText = 'Введите email';
+                document.getElementById('emailError').style.display = 'block';
+                return;
+            }
+            if (!password) {
+                document.getElementById('passwordError').innerText = 'Введите пароль';
+                document.getElementById('passwordError').style.display = 'block';
+                return;
+            }
+
+            const savedEmail = localStorage.getItem('focus_user_email');
+            const savedPassword = localStorage.getItem('focus_user_password');
+
+            if (email === savedEmail && password === savedPassword) {
+                localStorage.setItem('focus_logged_in', 'true');
+                window.location.href = 'dashboard.html';
+            } else {
+                document.getElementById('passwordError').innerText = 'Неверный email или пароль';
+                document.getElementById('passwordError').style.display = 'block';
+            }
+        });
+
+        document.getElementById('forgotBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Функция восстановления пароля будет доступна в следующей версии. Пожалуйста, напишите нам на support@focus.com');
+        });
+    </script>
+</body>
+</html>

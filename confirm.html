@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Подтверждение — FOCUS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+        }
+
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 30px;
+            margin-bottom: 16px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #8e8e9e;
+        }
+
+        .card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 24px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .email-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 12px;
+            color: #FFD966;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 16px 0;
+            word-break: break-all;
+        }
+
+        .info-text {
+            color: #8e8e9e;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 215, 0, 0.08);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 40px;
+            padding: 12px;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD966, #FFAA33);
+            border: none;
+            border-radius: 40px;
+            padding: 14px;
+            color: #0a0a0f;
+            font-weight: 700;
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 40px;
+            padding: 12px;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .success-message {
+            color: #4CAF50;
+            font-size: 12px;
+            margin-top: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='register.html'">←</div>
+                <div class="title">Подтвердите email</div>
+                <div class="subtitle">Мы отправили письмо для активации</div>
+            </div>
+
+            <div class="card">
+                <div>📧 Письмо отправлено на</div>
+                <div class="email-display" id="emailDisplay">user@example.com</div>
+                <div class="info-text">
+                    Перейдите по ссылке в письме, чтобы подтвердить аккаунт.<br>
+                    Не пришло? Проверьте папку «Спам».
+                </div>
+                <button class="btn-secondary" id="resendBtn">🔄 Отправить письмо повторно</button>
+                <div id="resendMessage" class="success-message"></div>
+            </div>
+
+            <div class="card">
+                <div class="info-text">Уже подтвердили email?</div>
+                <button class="btn-primary" id="confirmedBtn">✅ Я ПОДТВЕРДИЛ, ВОЙТИ</button>
+                <button class="btn-outline" id="demoBtn">👀 ПОСМОТРЕТЬ ДЕМО</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userEmail = localStorage.getItem('focus_user_email') || 'user@example.com';
+        document.getElementById('emailDisplay').innerText = userEmail;
+
+        document.getElementById('resendBtn').addEventListener('click', function() {
+            const msgDiv = document.getElementById('resendMessage');
+            msgDiv.innerText = 'Письмо отправлено повторно! Проверьте почту.';
+            msgDiv.style.display = 'block';
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 3000);
+        });
+
+        document.getElementById('confirmedBtn').addEventListener('click', function() {
+            localStorage.setItem('focus_email_confirmed', 'true');
+            window.location.href = 'profile-form.html';
+        });
+
+        let demoUsed = localStorage.getItem('focus_demo_used');
+        document.getElementById('demoBtn').addEventListener('click', function() {
+            if (demoUsed) {
+                alert('Демо-режим уже был использован. Подтвердите email для полного доступа.');
+                return;
+            }
+            localStorage.setItem('focus_demo_used', 'true');
+            localStorage.setItem('focus_demo_mode', 'true');
+            window.location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+</html>

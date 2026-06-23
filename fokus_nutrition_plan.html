@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — План питания</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            overflow: hidden;
+        }
+        .header {
+            padding: 14px 18px 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 0.5px solid rgba(255,215,0,0.1);
+        }
+        .back-btn {
+            font-size: 24px; cursor: pointer; width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,215,0,0.08); border-radius: 30px;
+        }
+        .title {
+            font-size: 24px; font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        /* Календарь (верхняя половина) */
+        .calendar-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 18px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.05);
+            max-height: 40%;
+        }
+        .month-title {
+            color: #FFD966;
+            margin: 12px 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .weekday {
+            font-size: 10px;
+            color: #8e8e9e;
+            text-align: center;
+            padding: 4px;
+        }
+        .day-cell {
+            text-align: center;
+            padding: 8px 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #fff;
+            transition: 0.2s;
+        }
+        .day-cell.has-plan {
+            background: rgba(255,215,0,0.2);
+            color: #FFD966;
+        }
+        .day-cell.selected {
+            border: 1px solid #FFD966;
+            background: rgba(255,215,0,0.3);
+        }
+        /* Детали плана (нижняя половина) */
+        .details-container {
+            flex: 1;
+            padding: 12px 18px;
+            overflow-y: auto;
+        }
+        .meal-block {
+            background: rgba(30,30,42,0.5);
+            border-radius: 16px;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+        }
+        .meal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .meal-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFD966;
+        }
+        .meal-add {
+            background: rgba(255,215,0,0.1);
+            border: 0.5px solid rgba(255,215,0,0.3);
+            border-radius: 20px;
+            padding: 4px 8px;
+            font-size: 10px;
+            color: #FFD966;
+            cursor: pointer;
+        }
+        .food-list { margin-top: 4px; }
+        .food-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 0.5px solid rgba(255,255,255,0.05);
+        }
+        .food-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            flex-wrap: wrap;
+        }
+        .food-icon { font-size: 14px; }
+        .food-name { font-size: 12px; color: #fff; min-width: 80px; }
+        .food-nutrition {
+            display: flex;
+            gap: 6px;
+            font-size: 9px;
+            color: #aaa;
+        }
+        .food-nutrition span { color: #FFD966; }
+        .food-actions { display: flex; gap: 6px; }
+        .food-edit, .food-delete { font-size: 12px; cursor: pointer; opacity: 0.6; }
+        .meal-total {
+            text-align: right;
+            font-size: 10px;
+            color: #8e8e9e;
+            margin-top: 6px;
+            padding-top: 4px;
+            border-top: 0.5px solid rgba(255,255,255,0.1);
+        }
+        .total-summary {
+            background: rgba(30,30,42,0.8);
+            border-radius: 16px;
+            padding: 10px;
+            margin-top: 8px;
+            border: 0.5px solid rgba(255,215,0,0.2);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .action-btn {
+            flex: 1;
+            background: rgba(255,215,0,0.1);
+            border: 0.5px solid rgba(255,215,0,0.3);
+            border-radius: 30px;
+            padding: 10px;
+            text-align: center;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .duplicate-select {
+            flex: 1;
+            background: rgba(255,215,0,0.1);
+            border: 0.5px solid rgba(255,215,0,0.3);
+            border-radius: 30px;
+            padding: 10px;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1a1a24;
+            border-radius: 28px;
+            width: 300px;
+            padding: 20px;
+            border: 0.5px solid #FFD966;
+        }
+        .modal-title { font-size: 18px; font-weight: 600; color: #FFD966; margin-bottom: 16px; text-align: center; }
+        .modal input, .modal select {
+            width: 100%;
+            background: rgba(30,30,42,0.8);
+            border: 0.5px solid rgba(255,215,0,0.3);
+            border-radius: 20px;
+            padding: 10px;
+            color: #fff;
+            margin-bottom: 12px;
+            outline: none;
+        }
+        .modal-buttons { display: flex; gap: 12px; margin-top: 16px; }
+        .modal-btn { flex: 1; text-align: center; padding: 10px; border-radius: 30px; cursor: pointer; }
+        .modal-btn.save { background: rgba(255,215,0,0.15); color: #FFD966; }
+        .modal-btn.cancel { background: rgba(255,255,255,0.1); color: #aaa; }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='fokus_nutrition.html'">←</div>
+                <div class="title">План питания</div>
+            </div>
+
+            <div class="calendar-container" id="calendarContainer"></div>
+            <div class="details-container" id="detailsContainer">
+                <div class="empty-state" style="text-align:center; padding:40px 20px; color:#8e8e9e;">📅 Выберите день в календаре</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка добавления блюда -->
+    <div id="foodModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="foodModalTitle">➕ Добавить блюдо</div>
+            <input type="text" id="foodName" placeholder="Название">
+            <input type="number" id="foodCalories" placeholder="Калории (ккал)">
+            <input type="number" id="foodProtein" placeholder="Белки (г)">
+            <input type="number" id="foodFat" placeholder="Жиры (г)">
+            <input type="number" id="foodCarbs" placeholder="Углеводы (г)">
+            <div class="modal-buttons">
+                <div class="modal-btn save" id="saveFoodBtn">Сохранить</div>
+                <div class="modal-btn cancel" id="closeFoodModalBtn">Отмена</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = null;
+        let currentMeals = {
+            breakfast: { items: [], total: { calories: 0, protein: 0, fat: 0, carbs: 0 } },
+            snack1: { items: [], total: { calories: 0, protein: 0, fat: 0, carbs: 0 } },
+            lunch: { items: [], total: { calories: 0, protein: 0, fat: 0, carbs: 0 } },
+            snack2: { items: [], total: { calories: 0, protein: 0, fat: 0, carbs: 0 } },
+            dinner: { items: [], total: { calories: 0, protein: 0, fat: 0, carbs: 0 } }
+        };
+        let currentEditingMeal = null;
+        let currentEditingFoodId = null;
+        
+        function loadPlanForDay(dateKey) {
+            const saved = localStorage.getItem(`meal_plan_${dateKey}`);
+            if (saved) {
+                const data = JSON.parse(saved);
+                //确保所有meal都有
+                const meals = ['breakfast','snack1','lunch','snack2','dinner'];
+                meals.forEach(m => { if (!data[m]) data[m] = { items: [], total: { calories:0, protein:0, fat:0, carbs:0 } }; });
+                return data;
+            }
+            return null;
+        }
+        
+        function savePlanForDay(dateKey, data) {
+            localStorage.setItem(`meal_plan_${dateKey}`, JSON.stringify(data));
+        }
+        
+        function recalcTotal(mealObj) {
+            let cal=0, prot=0, fat=0, carb=0;
+            mealObj.items.forEach(i => {
+                cal += i.calories || 0;
+                prot += i.protein || 0;
+                fat += i.fat || 0;
+                carb += i.carbs || 0;
+            });
+            mealObj.total = { calories: cal, protein: prot, fat: fat, carbs: carb };
+        }
+        
+        function renderMealsEditor() {
+            if (!currentDate) return;
+            const container = document.getElementById('detailsContainer');
+            let html = '';
+            const mealNames = {
+                breakfast: '🌅 Завтрак',
+                snack1: '🍏 Перекус 1',
+                lunch: '☀️ Обед',
+                snack2: '🍎 Перекус 2',
+                dinner: '🌙 Ужин'
+            };
+            for (let mealId in mealNames) {
+                const meal = currentMeals[mealId];
+                html += `
+                    <div class="meal-block" data-meal="${mealId}">
+                        <div class="meal-header">
+                            <span class="meal-name">${mealNames[mealId]}</span>
+                            <button class="meal-add" data-meal="${mealId}">+ блюдо</button>
+                        </div>
+                        <div class="food-list" data-meal="${mealId}">
+                `;
+                if (meal.items && meal.items.length) {
+                    meal.items.forEach(item => {
+                        html += `
+                            <div class="food-item">
+                                <div class="food-info">
+                                    <span class="food-icon">${item.icon || '🍽️'}</span>
+                                    <span class="food-name">${escapeHtml(item.name)}</span>
+                                    <div class="food-nutrition">
+                                        <span>${item.calories} ккал</span>
+                                        <span>🥩${item.protein||0}</span>
+                                        <span>🧈${item.fat||0}</span>
+                                        <span>🍚${item.carbs||0}</span>
+                                    </div>
+                                </div>
+                                <div class="food-actions">
+                                    <span class="food-edit" data-meal="${mealId}" data-id="${item.id}">✏️</span>
+                                    <span class="food-delete" data-meal="${mealId}" data-id="${item.id}">🗑️</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html += `<div style="padding: 8px 0; color: #666; font-size: 12px;">— нет блюд —</div>`;
+                }
+                html += `
+                        </div>
+                        <div class="meal-total">Итого: ${meal.total.calories} ккал | 🥩${meal.total.protein} 🧈${meal.total.fat} 🍚${meal.total.carbs}</div>
+                    </div>
+                `;
+            }
+            let totalCal=0, totalProt=0, totalFat=0, totalCarb=0;
+            for (let m in currentMeals) {
+                totalCal += currentMeals[m].total.calories;
+                totalProt += currentMeals[m].total.protein;
+                totalFat += currentMeals[m].total.fat;
+                totalCarb += currentMeals[m].total.carbs;
+            }
+            html += `
+                <div class="total-summary">
+                    <div style="display:flex; justify-content:space-between;"><span>📊 ЗА ВЕСЬ ДЕНЬ</span><span style="color:#FFD966;">${totalCal} ккал</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:12px;">
+                        <span>🥩 ${totalProt}г</span><span>🧈 ${totalFat}г</span><span>🍚 ${totalCarb}г</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn" id="savePlanBtn">💾 Сохранить план</button>
+                    <select id="duplicateDaysSelect" class="duplicate-select">
+                        <option value="1">📋 Дублировать на 1 день</option>
+                        <option value="7">📋 Дублировать на 7 дней</option>
+                        <option value="14">📋 Дублировать на 14 дней</option>
+                        <option value="21">📋 Дублировать на 21 день</option>
+                        <option value="28">📋 Дублировать на 28 дней</option>
+                    </select>
+                </div>
+            `;
+            container.innerHTML = html;
+            
+            // Обработчики
+            document.querySelectorAll('.meal-add').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    currentEditingMeal = btn.dataset.meal;
+                    currentEditingFoodId = null;
+                    document.getElementById('foodModalTitle').innerText = '➕ Добавить блюдо';
+                    document.getElementById('foodName').value = '';
+                    document.getElementById('foodCalories').value = '';
+                    document.getElementById('foodProtein').value = '';
+                    document.getElementById('foodFat').value = '';
+                    document.getElementById('foodCarbs').value = '';
+                    document.getElementById('foodModal').style.display = 'flex';
+                    e.stopPropagation();
+                });
+            });
+            document.querySelectorAll('.food-edit').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const mealId = el.dataset.meal;
+                    const id = parseInt(el.dataset.id);
+                    const item = currentMeals[mealId].items.find(i => i.id === id);
+                    if (item) {
+                        currentEditingMeal = mealId;
+                        currentEditingFoodId = id;
+                        document.getElementById('foodModalTitle').innerText = '✏️ Редактировать блюдо';
+                        document.getElementById('foodName').value = item.name;
+                        document.getElementById('foodCalories').value = item.calories;
+                        document.getElementById('foodProtein').value = item.protein || 0;
+                        document.getElementById('foodFat').value = item.fat || 0;
+                        document.getElementById('foodCarbs').value = item.carbs || 0;
+                        document.getElementById('foodModal').style.display = 'flex';
+                    }
+                    e.stopPropagation();
+                });
+            });
+            document.querySelectorAll('.food-delete').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const mealId = el.dataset.meal;
+                    const id = parseInt(el.dataset.id);
+                    currentMeals[mealId].items = currentMeals[mealId].items.filter(i => i.id !== id);
+                    recalcTotal(currentMeals[mealId]);
+                    renderMealsEditor();
+                    e.stopPropagation();
+                });
+            });
+            document.getElementById('savePlanBtn')?.addEventListener('click', () => {
+                savePlanForDay(currentDate, currentMeals);
+                alert(`План на ${currentDate} сохранён`);
+                renderCalendar();
+            });
+            document.getElementById('duplicateDaysSelect')?.addEventListener('change', (e) => {
+                const days = parseInt(e.target.value);
+                const startDate = new Date(currentDate);
+                for (let i = 0; i < days; i++) {
+                    const targetDate = new Date(startDate);
+                    targetDate.setDate(startDate.getDate() + i);
+                    const targetKey = targetDate.toISOString().slice(0,10);
+                    savePlanForDay(targetKey, JSON.parse(JSON.stringify(currentMeals)));
+                }
+                alert(`План продублирован на ${days} дней с ${currentDate}`);
+                renderCalendar();
+                e.target.value = '1';
+            });
+        }
+        
+        function loadPlanToEditor(dateKey) {
+            currentDate = dateKey;
+            const plan = loadPlanForDay(dateKey);
+            if (plan) {
+                currentMeals = JSON.parse(JSON.stringify(plan));
+            } else {
+                currentMeals = {
+                    breakfast: { items: [], total: { calories:0, protein:0, fat:0, carbs:0 } },
+                    snack1: { items: [], total: { calories:0, protein:0, fat:0, carbs:0 } },
+                    lunch: { items: [], total: { calories:0, protein:0, fat:0, carbs:0 } },
+                    snack2: { items: [], total: { calories:0, protein:0, fat:0, carbs:0 } },
+                    dinner: { items: [], total: { calories:0, protein:0, fat:0, carbs:0 } }
+                };
+            }
+            renderMealsEditor();
+        }
+        
+        function renderCalendar() {
+            const container = document.getElementById('calendarContainer');
+            container.innerHTML = '';
+            const today = new Date();
+            for (let offset = 0; offset < 3; offset++) {
+                const date = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+                const year = date.getFullYear(), month = date.getMonth();
+                const monthName = date.toLocaleString('ru', { month: 'long', year: 'numeric' });
+                const monthDiv = document.createElement('div');
+                monthDiv.innerHTML = `<div class="month-title">📆 ${monthName}</div>`;
+                const weekGrid = document.createElement('div');
+                weekGrid.className = 'calendar-grid';
+                ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'].forEach(d => {
+                    const w = document.createElement('div'); w.className = 'weekday'; w.innerText = d;
+                    weekGrid.appendChild(w);
+                });
+                monthDiv.appendChild(weekGrid);
+                const daysGrid = document.createElement('div');
+                daysGrid.className = 'calendar-grid';
+                let firstDay = new Date(year, month, 1).getDay();
+                firstDay = firstDay === 0 ? 7 : firstDay;
+                for (let i = 1; i < firstDay; i++) { const empty = document.createElement('div'); daysGrid.appendChild(empty); }
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const dayDate = new Date(year, month, d);
+                    const dateKey = dayDate.toISOString().slice(0,10);
+                    const hasPlan = loadPlanForDay(dateKey) !== null;
+                    const dayCell = document.createElement('div');
+                    dayCell.className = 'day-cell';
+                    if (hasPlan) dayCell.classList.add('has-plan');
+                    if (currentDate === dateKey) dayCell.classList.add('selected');
+                    dayCell.innerText = d;
+                    dayCell.addEventListener('click', () => {
+                        currentDate = dateKey;
+                        renderCalendar();
+                        loadPlanToEditor(dateKey);
+                    });
+                    daysGrid.appendChild(dayCell);
+                }
+                monthDiv.appendChild(daysGrid);
+                container.appendChild(monthDiv);
+            }
+        }
+        
+        document.getElementById('saveFoodBtn')?.addEventListener('click', () => {
+            const name = document.getElementById('foodName').value.trim();
+            const calories = parseInt(document.getElementById('foodCalories').value) || 0;
+            const protein = parseInt(document.getElementById('foodProtein').value) || 0;
+            const fat = parseInt(document.getElementById('foodFat').value) || 0;
+            const carbs = parseInt(document.getElementById('foodCarbs').value) || 0;
+            if (!name) { alert('Введите название'); return; }
+            if (currentEditingFoodId) {
+                const item = currentMeals[currentEditingMeal].items.find(i => i.id === currentEditingFoodId);
+                if (item) {
+                    item.name = name; item.calories = calories; item.protein = protein; item.fat = fat; item.carbs = carbs;
+                }
+            } else {
+                currentMeals[currentEditingMeal].items.push({
+                    id: Date.now(),
+                    name: name,
+                    calories: calories,
+                    protein: protein,
+                    fat: fat,
+                    carbs: carbs,
+                    icon: '🍽️'
+                });
+            }
+            recalcTotal(currentMeals[currentEditingMeal]);
+            document.getElementById('foodModal').style.display = 'none';
+            renderMealsEditor();
+        });
+        document.getElementById('closeFoodModalBtn')?.addEventListener('click', () => {
+            document.getElementById('foodModal').style.display = 'none';
+        });
+        
+        function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+        
+        renderCalendar();
+    </script>
+</body>
+</html>

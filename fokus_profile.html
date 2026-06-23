@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — Профиль</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 14px 18px 12px 18px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .screen::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Шапка */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 30px;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateX(-3px);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Аватар */
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FFD966, #FFAA33);
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .profile-level {
+            background: rgba(255,215,0,0.15);
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            color: #FFD966;
+        }
+
+        /* Карточка статистики */
+        .stats-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+        }
+
+        .stats-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFD966;
+            margin-bottom: 12px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 0.5px solid rgba(255,255,255,0.08);
+        }
+
+        .stats-row:last-child {
+            border-bottom: none;
+        }
+
+        .stats-label {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .stats-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFD966;
+        }
+
+        /* Стильные кнопки */
+        .action-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-btn {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            border: 0.5px solid rgba(255,215,0,0.15);
+            transition: 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: rgba(255,215,0,0.4);
+            background: rgba(255,215,0,0.05);
+            transform: translateX(3px);
+        }
+
+        .action-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .action-icon {
+            font-size: 28px;
+        }
+
+        .action-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .action-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .action-sub {
+            font-size: 11px;
+            color: #8e8e9e;
+        }
+
+        .action-arrow {
+            font-size: 20px;
+            color: #FFD966;
+            opacity: 0.6;
+        }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1a1a24;
+            border-radius: 28px;
+            width: 300px;
+            padding: 20px;
+            border: 0.5px solid #FFD966;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFD966;
+            margin-bottom: 16px;
+        }
+
+        .modal textarea, .modal input {
+            width: 100%;
+            background: rgba(30, 30, 42, 0.8);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 10px;
+            color: #fff;
+            margin-bottom: 12px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+
+        .modal-btn.save {
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD966;
+        }
+
+        .modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="section-header">
+                <div class="back-btn" onclick="location.href='index.html'">←</div>
+                <div class="section-title">Профиль</div>
+            </div>
+
+            <div class="profile-header">
+                <div class="avatar" id="avatarBtn">🧘</div>
+                <div class="profile-name" id="userName">Александр</div>
+                <div class="profile-level" id="userLevel">Мастер фокуса</div>
+            </div>
+
+            <div class="stats-card">
+                <div class="stats-title">📊 Статистика</div>
+                <div class="stats-row"><span class="stats-label">🔥 Стрик</span><span class="stats-value" id="streakValue">7 дней</span></div>
+                <div class="stats-row"><span class="stats-label">✅ Выполнено задач</span><span class="stats-value" id="tasksValue">128</span></div>
+                <div class="stats-row"><span class="stats-label">⏱️ Время в приложении</span><span class="stats-value" id="timeValue">12ч 30м</span></div>
+            </div>
+
+            <div class="action-grid">
+                <!-- Галерея -->
+                <div class="action-btn" id="galleryBtn">
+                    <div class="action-left">
+                        <div class="action-icon">📸</div>
+                        <div class="action-text">
+                            <div class="action-title">Галерея</div>
+                            <div class="action-sub" id="galleryPreview">0 фото</div>
+                        </div>
+                    </div>
+                    <div class="action-arrow">→</div>
+                </div>
+
+                <!-- О себе -->
+                <div class="action-btn" id="aboutBtn">
+                    <div class="action-left">
+                        <div class="action-icon">📝</div>
+                        <div class="action-text">
+                            <div class="action-title">О себе</div>
+                            <div class="action-sub" id="aboutPreview">Расскажи о себе</div>
+                        </div>
+                    </div>
+                    <div class="action-arrow">→</div>
+                </div>
+
+                <!-- Работа/бизнес -->
+                <div class="action-btn" id="businessBtn">
+                    <div class="action-left">
+                        <div class="action-icon">💼</div>
+                        <div class="action-text">
+                            <div class="action-title">Работа и бизнес</div>
+                            <div class="action-sub">Цели и планы</div>
+                        </div>
+                    </div>
+                    <div class="action-arrow">→</div>
+                </div>
+
+                <!-- Финансы -->
+                <div class="action-btn" id="financeBtn">
+                    <div class="action-left">
+                        <div class="action-icon">💰</div>
+                        <div class="action-text">
+                            <div class="action-title">Финансы</div>
+                            <div class="action-sub">Бюджет, копилки, семья</div>
+                        </div>
+                    </div>
+                    <div class="action-arrow">→</div>
+                </div>
+
+                <!-- Friend Code -->
+                <div class="action-btn" id="friendCodeBtn">
+                    <div class="action-left">
+                        <div class="action-icon">🔗</div>
+                        <div class="action-text">
+                            <div class="action-title">Friend Code</div>
+                            <div class="action-sub">Поделиться профилем</div>
+                        </div>
+                    </div>
+                    <div class="action-arrow">→</div>
+                </div>
+
+                <!-- Настройки -->
+                <div class="action-btn" id="settingsBtn">
+                    <div class="action-left">
+                        <div class="action-icon">⚙️</div>
+                        <div class="action-text">
+                            <div class="action-title">Настройки</div>
+                            <div class="action-sub">Уведомления, тема</div>
+                        </div>
+                    </div>
+                    <div class="action-arrow">→</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка галереи -->
+    <div id="galleryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">📸 Галерея</div>
+            <div id="galleryGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;"></div>
+            <div class="modal-buttons">
+                <div class="modal-btn save" id="closeGalleryBtn">Закрыть</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка О себе -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">📝 О себе</div>
+            <textarea id="aboutText" rows="5" placeholder="Расскажи о себе..."></textarea>
+            <div class="modal-buttons">
+                <div class="modal-btn save" id="saveAboutBtn">Сохранить</div>
+                <div class="modal-btn cancel" id="cancelAboutBtn">Отмена</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let profileData = {
+            name: "Александр",
+            level: "Мастер фокуса",
+            about: "",
+            avatar: "🧘",
+            gallery: [],
+            streak: 7,
+            tasks: 128,
+            time: "12ч 30м"
+        };
+
+        function loadProfile() {
+            const saved = localStorage.getItem('focus_profile_data');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    profileData = { ...profileData, ...data };
+                } catch(e) {}
+            }
+            updateUI();
+        }
+
+        function saveProfile() {
+            localStorage.setItem('focus_profile_data', JSON.stringify(profileData));
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('userName').innerText = profileData.name;
+            document.getElementById('userLevel').innerText = profileData.level;
+            document.getElementById('streakValue').innerText = profileData.streak + ' дней';
+            document.getElementById('tasksValue').innerText = profileData.tasks;
+            document.getElementById('timeValue').innerText = profileData.time;
+            document.getElementById('aboutPreview').innerText = profileData.about ? profileData.about.substring(0, 25) + '...' : 'Расскажи о себе';
+            document.getElementById('galleryPreview').innerText = profileData.gallery.length + ' фото';
+        }
+
+        document.getElementById('avatarBtn').addEventListener('click', () => {
+            const newName = prompt('Введите ваше имя:', profileData.name);
+            if (newName && newName.trim()) {
+                profileData.name = newName.trim();
+                saveProfile();
+            }
+        });
+
+        // Галерея
+        function renderGalleryModal() {
+            const container = document.getElementById('galleryGrid');
+            container.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                const item = document.createElement('div');
+                item.style.cssText = 'aspect-ratio:1; background:rgba(255,215,0,0.05); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; cursor:pointer; border:0.5px solid rgba(255,215,0,0.2); overflow:hidden;';
+                if (profileData.gallery[i]) {
+                    const img = document.createElement('img');
+                    img.src = profileData.gallery[i];
+                    img.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+                    item.appendChild(img);
+                } else {
+                    item.innerHTML = '📷';
+                }
+                item.addEventListener('click', () => uploadPhoto(i));
+                container.appendChild(item);
+            }
+        }
+
+        function uploadPhoto(index) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        profileData.gallery[index] = ev.target.result;
+                        saveProfile();
+                        renderGalleryModal();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        document.getElementById('galleryBtn').addEventListener('click', () => {
+            renderGalleryModal();
+            document.getElementById('galleryModal').style.display = 'flex';
+        });
+        document.getElementById('closeGalleryBtn').addEventListener('click', () => {
+            document.getElementById('galleryModal').style.display = 'none';
+        });
+
+        // О себе
+        document.getElementById('aboutBtn').addEventListener('click', () => {
+            document.getElementById('aboutText').value = profileData.about || '';
+            document.getElementById('aboutModal').style.display = 'flex';
+        });
+        document.getElementById('saveAboutBtn').addEventListener('click', () => {
+            profileData.about = document.getElementById('aboutText').value;
+            saveProfile();
+            document.getElementById('aboutModal').style.display = 'none';
+        });
+        document.getElementById('cancelAboutBtn').addEventListener('click', () => {
+            document.getElementById('aboutModal').style.display = 'none';
+        });
+
+        // Кнопки переходов
+        document.getElementById('businessBtn').addEventListener('click', () => {
+            window.location.href = 'fokus_business.html';
+        });
+        document.getElementById('financeBtn').addEventListener('click', () => {
+            alert('💰 Раздел «Финансы» будет доступен в следующей версии');
+        });
+        document.getElementById('friendCodeBtn').addEventListener('click', () => {
+            alert('🔗 Ваш Friend Code: FOCUS-' + Math.random().toString(36).substring(2, 8).toUpperCase());
+        });
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            alert('⚙️ Настройки уведомлений, темы и приватности скоро появятся');
+        });
+
+        loadProfile();
+    </script>
+</body>
+</html>

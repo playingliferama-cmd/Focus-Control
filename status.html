@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Статус — FOCUS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            overflow-y: hidden;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 30px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .info-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 18px;
+            padding: 8px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .timer-label {
+            font-size: 11px;
+            color: #8e8e9e;
+            margin-bottom: 2px;
+        }
+
+        .timer-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFD966;
+        }
+
+        .status-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .status-item {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 14px;
+            padding: 8px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .status-icon {
+            font-size: 20px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 16px;
+        }
+
+        .status-info {
+            flex: 1;
+        }
+
+        .status-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 1px;
+        }
+
+        .status-desc {
+            font-size: 9px;
+            color: #8e8e9e;
+        }
+
+        .status-check {
+            font-size: 18px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 3px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD966, #FFAA33);
+            border-radius: 3px;
+            width: 0%;
+        }
+
+        .status-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: #aaa;
+        }
+
+        .paid-friend-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 14px;
+            padding: 6px 12px;
+            margin-bottom: 10px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .paid-label {
+            font-size: 12px;
+            color: #fff;
+        }
+
+        .paid-status {
+            font-size: 18px;
+        }
+
+        .message-card {
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 14px;
+            padding: 6px;
+            margin-bottom: 10px;
+            text-align: center;
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .message-text {
+            font-size: 9px;
+            color: #FFD966;
+        }
+
+        .refresh-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 40px;
+            padding: 8px;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='dashboard.html'">←</div>
+                <div class="title">Статус</div>
+            </div>
+
+            <div class="info-card">
+                <div class="timer-label">🔥 СЛЕДУЮЩАЯ ПРОВЕРКА</div>
+                <div class="timer-value" id="timerValue">через 7 дней</div>
+            </div>
+
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-header">
+                        <div class="status-icon">💪</div>
+                        <div class="status-info">
+                            <div class="status-name">Зарядка</div>
+                            <div class="status-desc">5 дней в неделю</div>
+                        </div>
+                        <div class="status-check" id="workoutStatus">🟡</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="workoutFill" style="width: 0%;"></div>
+                    </div>
+                    <div class="status-stats">
+                        <span>Выполнено: <span id="workoutCurrent">0</span>/<span id="workoutNeed">5</span></span>
+                        <span id="workoutText">0 из 5 дней</span>
+                    </div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-header">
+                        <div class="status-icon">😴</div>
+                        <div class="status-info">
+                            <div class="status-name">Сон</div>
+                            <div class="status-desc">Каждый день</div>
+                        </div>
+                        <div class="status-check" id="sleepStatus">🟡</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="sleepFill" style="width: 0%;"></div>
+                    </div>
+                    <div class="status-stats">
+                        <span>Выполнено: <span id="sleepCurrent">0</span>/<span id="sleepNeed">7</span></span>
+                        <span id="sleepText">0 из 7 дней</span>
+                    </div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-header">
+                        <div class="status-icon">🙏</div>
+                        <div class="status-info">
+                            <div class="status-name">Благодарность</div>
+                            <div class="status-desc">3 уникальные записи в день</div>
+                        </div>
+                        <div class="status-check" id="gratitudeStatus">🟡</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="gratitudeFill" style="width: 0%;"></div>
+                    </div>
+                    <div class="status-stats">
+                        <span>Выполнено: <span id="gratitudeCurrent">0</span>/<span id="gratitudeNeed">3</span></span>
+                        <span id="gratitudeText">0 из 3 дней</span>
+                    </div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-header">
+                        <div class="status-icon">📋</div>
+                        <div class="status-info">
+                            <div class="status-name">Висяки</div>
+                            <div class="status-desc">Новая задача за 3 дня</div>
+                        </div>
+                        <div class="status-check" id="tasksStatus">🟡</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="tasksFill" style="width: 0%;"></div>
+                    </div>
+                    <div class="status-stats">
+                        <span>Статус: <span id="tasksText">0/1</span></span>
+                    </div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-header">
+                        <div class="status-icon">👥</div>
+                        <div class="status-info">
+                            <div class="status-name">Активные приглашённые</div>
+                            <div class="status-desc">Друг подтвердил email и заполнил анкету</div>
+                        </div>
+                        <div class="status-check" id="activeFriendsStatus">🟡</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="activeFriendsFill" style="width: 0%;"></div>
+                    </div>
+                    <div class="status-stats">
+                        <span>Выполнено: <span id="activeFriendsCurrent">0</span>/<span id="activeFriendsNeed">3</span></span>
+                        <span id="activeFriendsText">0 из 3</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paid-friend-card">
+                <span class="paid-label">💎 ПРЕМИУМ-ПРИГЛАШЕНИЕ</span>
+                <span class="paid-status" id="paidFriendStatus">🟡</span>
+            </div>
+
+            <div class="message-card" id="messageCard">
+                <div class="message-text" id="messageText">Выполните все условия до воскресенья</div>
+            </div>
+
+            <div class="refresh-btn" id="refreshBtn">🔄 ОБНОВИТЬ СТАТУС</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('timerValue').innerText = 'через 7 дней';
+
+        let criteria = {
+            workout: { current: 3, need: 5 },
+            sleep: { current: 4, need: 7 },
+            gratitude: { current: 2, need: 3 },
+            tasks: { done: false, need: 1 },
+            activeFriends: { current: 2, need: 3 },
+            paidFriend: false
+        };
+
+        let messageCard = document.getElementById('messageCard');
+        let messageText = document.getElementById('messageText');
+
+        function updateUI() {
+            const workoutOk = criteria.workout.current >= criteria.workout.need;
+            document.getElementById('workoutFill').style.width = Math.min((criteria.workout.current / criteria.workout.need) * 100, 100) + '%';
+            document.getElementById('workoutCurrent').innerText = criteria.workout.current;
+            document.getElementById('workoutText').innerText = criteria.workout.current + ' из ' + criteria.workout.need + ' дней';
+            document.getElementById('workoutStatus').innerHTML = workoutOk ? '✅' : '🟡';
+
+            const sleepOk = criteria.sleep.current >= criteria.sleep.need;
+            document.getElementById('sleepFill').style.width = Math.min((criteria.sleep.current / criteria.sleep.need) * 100, 100) + '%';
+            document.getElementById('sleepCurrent').innerText = criteria.sleep.current;
+            document.getElementById('sleepText').innerText = criteria.sleep.current + ' из ' + criteria.sleep.need + ' дней';
+            document.getElementById('sleepStatus').innerHTML = sleepOk ? '✅' : '🟡';
+
+            const gratitudeOk = criteria.gratitude.current >= criteria.gratitude.need;
+            document.getElementById('gratitudeFill').style.width = Math.min((criteria.gratitude.current / criteria.gratitude.need) * 100, 100) + '%';
+            document.getElementById('gratitudeCurrent').innerText = criteria.gratitude.current;
+            document.getElementById('gratitudeText').innerText = criteria.gratitude.current + ' из ' + criteria.gratitude.need + ' дней';
+            document.getElementById('gratitudeStatus').innerHTML = gratitudeOk ? '✅' : '🟡';
+
+            document.getElementById('tasksFill').style.width = criteria.tasks.done ? '100%' : '0%';
+            document.getElementById('tasksText').innerHTML = criteria.tasks.done ? '✅ 1/1' : '0/1';
+            document.getElementById('tasksStatus').innerHTML = criteria.tasks.done ? '✅' : '🟡';
+
+            const activeOk = criteria.activeFriends.current >= criteria.activeFriends.need;
+            document.getElementById('activeFriendsFill').style.width = Math.min((criteria.activeFriends.current / criteria.activeFriends.need) * 100, 100) + '%';
+            document.getElementById('activeFriendsCurrent').innerText = criteria.activeFriends.current;
+            document.getElementById('activeFriendsText').innerText = criteria.activeFriends.current + ' из ' + criteria.activeFriends.need;
+            document.getElementById('activeFriendsStatus').innerHTML = activeOk ? '✅' : '🟡';
+
+            document.getElementById('paidFriendStatus').innerHTML = criteria.paidFriend ? '✅' : '🟡';
+        }
+
+        function checkAllConditions() {
+            const workoutOk = criteria.workout.current >= criteria.workout.need;
+            const sleepOk = criteria.sleep.current >= criteria.sleep.need;
+            const gratitudeOk = criteria.gratitude.current >= criteria.gratitude.need;
+            const tasksOk = criteria.tasks.done;
+            const activeOk = criteria.activeFriends.current >= criteria.activeFriends.need;
+
+            const allDone = workoutOk && sleepOk && gratitudeOk && tasksOk && activeOk;
+
+            if (allDone) {
+                messageCard.style.borderColor = '#4CAF50';
+                messageText.innerHTML = '✅ ВСЕ УСЛОВИЯ ВЫПОЛНЕНЫ! Бесплатный доступ на следующую неделю активирован.';
+            } else if (criteria.paidFriend) {
+                messageCard.style.borderColor = '#FFD966';
+                messageText.innerHTML = '💰 У вас есть премиум-приглашение. Монеты сохраняются даже при невыполнении условий.';
+            } else {
+                messageCard.style.borderColor = '#ff4444';
+                messageText.innerHTML = '⚠️ Условия не выполнены. Без премиум-приглашения сгорит 75% монет.';
+            }
+        }
+
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            alert('Данные обновлены');
+            checkAllConditions();
+        });
+
+        updateUI();
+        checkAllConditions();
+    </script>
+</body>
+</html>

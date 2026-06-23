@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>LS Control — Ментальное здоровье</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 14px 18px 12px 18px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 30px;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateX(-3px);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .scroll-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 14px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFD966;
+            margin-bottom: 12px;
+        }
+
+        /* Вкладки */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            font-size: 13px;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD966;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 14px;
+            padding: 10px 12px;
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-name {
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .task-date {
+            font-size: 10px;
+            color: #8e8e9e;
+            margin-top: 2px;
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+        }
+
+        .task-checkbox.checked {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd966;
+        }
+
+        .task-checkbox.checked::after {
+            content: "✓";
+            color: #ffd966;
+            font-size: 12px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .task-delete {
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .add-task {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .add-task input {
+            flex: 1;
+            background: rgba(30, 30, 42, 0.8);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 8px 14px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .add-task button {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 8px 16px;
+            color: #FFD966;
+            cursor: pointer;
+        }
+
+        .restore-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            color: #FFD966;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        /* Дневник эмоций */
+        .emotion-grid {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .emotion-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            font-size: 24px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .emotion-btn.selected {
+            border-color: #FFD966;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .emotion-text {
+            width: 100%;
+            background: rgba(30, 30, 42, 0.8);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 13px;
+            margin-bottom: 12px;
+            outline: none;
+            resize: none;
+        }
+
+        .save-emotion {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 10px;
+            text-align: center;
+            color: #FFD966;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .archive-link {
+            font-size: 12px;
+            color: #8e8e9e;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        /* Спринты */
+        .sprint-input {
+            width: 100%;
+            background: rgba(30, 30, 42, 0.8);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 13px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        .duration-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .duration-btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .duration-btn.active {
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD966;
+        }
+
+        .sprint-start {
+            background: rgba(255, 215, 0, 0.15);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 12px;
+            text-align: center;
+            color: #FFD966;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #FFD966;
+            margin: 16px 0;
+        }
+
+        .sprint-task {
+            text-align: center;
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 16px;
+        }
+
+        .sprint-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .sprint-pause, .sprint-stop {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+
+        .sprint-pause {
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD966;
+        }
+
+        .sprint-stop {
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+        }
+
+        .sprint-history {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-item {
+            font-size: 11px;
+            color: #8e8e9e;
+            padding: 4px 0;
+        }
+
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 6px;
+            background: rgba(18, 18, 24, 0.9);
+            backdrop-filter: blur(20px);
+            border-top: 0.5px solid rgba(255,255,255,0.06);
+            margin-top: 12px;
+            border-radius: 32px;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: #6e6e7e;
+            font-size: 9px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px 12px;
+            border-radius: 30px;
+        }
+
+        .tab-item.active {
+            color: #ffd966;
+            background: rgba(255, 217, 102, 0.1);
+        }
+
+        .tab-icon {
+            font-size: 18px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1a1a24;
+            border-radius: 28px;
+            width: 300px;
+            padding: 20px;
+            border: 0.5px solid #FFD966;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFD966;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="section-header">
+                <div class="header-left">
+                    <div class="back-btn" onclick="location.href='index.html'">←</div>
+                    <div class="section-title">Ментальное здоровье</div>
+                </div>
+            </div>
+
+            <div class="scroll-content">
+                <!-- Разгрузка мозга -->
+                <div class="card">
+                    <div class="card-title">📋 Разгрузка мозга</div>
+                    <div class="tabs" id="taskTabs">
+                        <div class="tab active" data-tab="quick">⚡ 15 минут</div>
+                        <div class="tab" data-tab="plan">📅 План</div>
+                        <div class="tab" data-tab="trash">🗑️ Корзина</div>
+                    </div>
+                    <div id="quickTasks" class="task-list"></div>
+                    <div id="planTasks" class="task-list" style="display:none;"></div>
+                    <div id="trashTasks" class="task-list" style="display:none;"></div>
+                    <div class="add-task" id="addTaskContainer">
+                        <input type="text" id="taskInput" placeholder="Новая задача...">
+                        <button id="addTaskBtn">+</button>
+                    </div>
+                    <div id="restoreContainer" style="display:none;">
+                        <div class="restore-btn" id="restoreBtn">♻️ Вернуть всё в План</div>
+                    </div>
+                </div>
+
+                <!-- Дневник эмоций -->
+                <div class="card">
+                    <div class="card-title">😊 Дневник эмоций</div>
+                    <div class="emotion-grid">
+                        <div class="emotion-btn" data-emotion="😊">😊</div>
+                        <div class="emotion-btn" data-emotion="😐">😐</div>
+                        <div class="emotion-btn" data-emotion="😢">😢</div>
+                        <div class="emotion-btn" data-emotion="😡">😡</div>
+                        <div class="emotion-btn" data-emotion="😨">😨</div>
+                    </div>
+                    <textarea class="emotion-text" id="emotionText" placeholder="Что я чувствую?"></textarea>
+                    <div class="save-emotion" id="saveEmotionBtn">💾 Сохранить</div>
+                    <div class="archive-link" id="showArchiveBtn">📂 Архив эмоций</div>
+                </div>
+
+                <!-- Тренировка префронтальной коры -->
+                <div class="card">
+                    <div class="card-title">🧠 Тренировка префронтальной коры</div>
+                    <div id="sprintSetup">
+                        <input type="text" id="sprintTask" class="sprint-input" placeholder="Что будем делать?">
+                        <div class="duration-buttons">
+                            <div class="duration-btn" data-duration="45">45 минут</div>
+                            <div class="duration-btn active" data-duration="90">90 минут</div>
+                        </div>
+                        <div class="sprint-start" id="startSprintBtn">🚀 СТАРТ</div>
+                    </div>
+                    <div id="sprintActive" style="display:none;">
+                        <div class="timer-display" id="timerDisplay">90:00</div>
+                        <div class="sprint-task" id="activeSprintTask"></div>
+                        <div class="sprint-controls">
+                            <div class="sprint-pause" id="pauseSprintBtn">⏸️ Пауза</div>
+                            <div class="sprint-stop" id="stopSprintBtn">⏹️ Стоп</div>
+                        </div>
+                    </div>
+                    <div class="sprint-history" id="sprintHistory"></div>
+                </div>
+            </div>
+
+            <div class="tab-bar">
+                <div class="tab-item" onclick="location.href='fokus_progress.html'">
+                    <span class="tab-icon">📈</span>
+                    <span>Прогресс</span>
+                </div>
+                <div class="tab-item active">
+                    <span class="tab-icon">🧠</span>
+                    <span>Менталка</span>
+                </div>
+                <div class="tab-item" onclick="location.href='fokus_profile.html'">
+                    <span class="tab-icon">👤</span>
+                    <span>Профиль</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка архива эмоций -->
+    <div id="archiveModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">📂 Архив эмоций</div>
+            <div id="archiveList" style="max-height:300px; overflow-y:auto;"></div>
+            <div class="modal-btn save" id="closeArchiveBtn" style="margin-top:16px;">Закрыть</div>
+        </div>
+    </div>
+
+    <script>
+        // ========== ЗАДАЧИ ==========
+        let tasks = {
+            quick: [],
+            plan: [],
+            trash: []
+        };
+        let nextTaskId = 1;
+
+        function loadTasks() {
+            const saved = localStorage.getItem('ls_control_mental_tasks');
+            if (saved) {
+                tasks = JSON.parse(saved);
+            } else {
+                tasks = {
+                    quick: [{ id: nextTaskId++, text: "Помыть посуду", done: false }],
+                    plan: [{ id: nextTaskId++, text: "Сдать проект", due: "Завтра 18:00", done: false }],
+                    trash: []
+                };
+            }
+            renderTasks();
+        }
+
+        function saveTasks() {
+            localStorage.setItem('ls_control_mental_tasks', JSON.stringify(tasks));
+        }
+
+        function renderTasks() {
+            const quickContainer = document.getElementById('quickTasks');
+            const planContainer = document.getElementById('planTasks');
+            const trashContainer = document.getElementById('trashTasks');
+            
+            quickContainer.innerHTML = '';
+            tasks.quick.forEach(task => {
+                quickContainer.appendChild(createTaskElement(task, 'quick'));
+            });
+            
+            planContainer.innerHTML = '';
+            tasks.plan.forEach(task => {
+                planContainer.appendChild(createTaskElement(task, 'plan'));
+            });
+            
+            trashContainer.innerHTML = '';
+            tasks.trash.forEach(task => {
+                trashContainer.appendChild(createTaskElement(task, 'trash'));
+            });
+        }
+
+        function createTaskElement(task, type) {
+            const div = document.createElement('div');
+            div.className = 'task-item';
+            div.innerHTML = `
+                <div class="task-info">
+                    <div class="task-name">${escapeHtml(task.text)}</div>
+                    ${task.due ? `<div class="task-date">📅 ${task.due}</div>` : ''}
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <div class="task-checkbox ${task.done ? 'checked' : ''}" data-id="${task.id}" data-type="${type}"></div>
+                    <div class="task-actions">
+                        <div class="task-delete" data-id="${task.id}" data-type="${type}">🗑️</div>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        let currentTab = 'quick';
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                document.getElementById('quickTasks').style.display = currentTab === 'quick' ? 'block' : 'none';
+                document.getElementById('planTasks').style.display = currentTab === 'plan' ? 'block' : 'none';
+                document.getElementById('trashTasks').style.display = currentTab === 'trash' ? 'block' : 'none';
+                document.getElementById('addTaskContainer').style.display = currentTab === 'trash' ? 'none' : 'flex';
+                document.getElementById('restoreContainer').style.display = currentTab === 'trash' ? 'block' : 'none';
+            });
+        });
+
+        document.getElementById('addTaskBtn').addEventListener('click', () => {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+            if (!text) return;
+            if (currentTab === 'quick') {
+                tasks.quick.push({ id: nextTaskId++, text, done: false });
+            } else if (currentTab === 'plan') {
+                tasks.plan.push({ id: nextTaskId++, text, due: "Не указана", done: false });
+            }
+            input.value = '';
+            saveTasks();
+            renderTasks();
+        });
+
+        document.getElementById('restoreBtn').addEventListener('click', () => {
+            tasks.plan.push(...tasks.trash);
+            tasks.trash = [];
+            saveTasks();
+            renderTasks();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('task-checkbox')) {
+                const id = parseInt(e.target.dataset.id);
+                const type = e.target.dataset.type;
+                const task = tasks[type].find(t => t.id === id);
+                if (task) {
+                    task.done = !task.done;
+                    saveTasks();
+                    renderTasks();
+                }
+            }
+            if (e.target.classList.contains('task-delete')) {
+                const id = parseInt(e.target.dataset.id);
+                const type = e.target.dataset.type;
+                const taskIndex = tasks[type].findIndex(t => t.id === id);
+                if (taskIndex !== -1) {
+                    const task = tasks[type][taskIndex];
+                    tasks.trash.push({ ...task, done: false });
+                    tasks[type].splice(taskIndex, 1);
+                    saveTasks();
+                    renderTasks();
+                }
+            }
+        });
+
+        // ========== ЭМОЦИИ ==========
+        let emotions = [];
+        let selectedEmotion = null;
+
+        function loadEmotions() {
+            const saved = localStorage.getItem('ls_control_mental_emotions');
+            if (saved) {
+                emotions = JSON.parse(saved);
+            }
+        }
+
+        function saveEmotions() {
+            localStorage.setItem('ls_control_mental_emotions', JSON.stringify(emotions));
+        }
+
+        document.querySelectorAll('.emotion-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedEmotion = btn.dataset.emotion;
+            });
+        });
+
+        document.getElementById('saveEmotionBtn').addEventListener('click', () => {
+            const text = document.getElementById('emotionText').value.trim();
+            if (!selectedEmotion && !text) return;
+            emotions.unshift({
+                date: new Date().toLocaleDateString('ru-RU'),
+                emotion: selectedEmotion || '😐',
+                text: text || '—'
+            });
+            saveEmotions();
+            selectedEmotion = null;
+            document.getElementById('emotionText').value = '';
+            document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
+            alert('Эмоция сохранена!');
+        });
+
+        document.getElementById('showArchiveBtn').addEventListener('click', () => {
+            const archiveDiv = document.getElementById('archiveList');
+            archiveDiv.innerHTML = '';
+            emotions.forEach(e => {
+                const div = document.createElement('div');
+                div.style.padding = '8px 0';
+                div.style.borderBottom = '0.5px solid rgba(255,255,255,0.1)';
+                div.innerHTML = `<div style="color:#FFD966;">${e.date}</div><div>${e.emotion} ${e.text}</div>`;
+                archiveDiv.appendChild(div);
+            });
+            document.getElementById('archiveModal').style.display = 'flex';
+        });
+
+        document.getElementById('closeArchiveBtn').addEventListener('click', () => {
+            document.getElementById('archiveModal').style.display = 'none';
+        });
+
+        // ========== СПРИНТЫ ==========
+        let sprints = [];
+        let sprintTimer = null;
+        let sprintRemaining = 0;
+        let sprintActive = false;
+        let sprintPaused = false;
+        let currentDuration = 90;
+
+        function loadSprints() {
+            const saved = localStorage.getItem('ls_control_mental_sprints');
+            if (saved) {
+                sprints = JSON.parse(saved);
+            }
+            renderSprintHistory();
+        }
+
+        function saveSprints() {
+            localStorage.setItem('ls_control_mental_sprints', JSON.stringify(sprints));
+        }
+
+        function renderSprintHistory() {
+            const container = document.getElementById('sprintHistory');
+            container.innerHTML = '<div style="font-size:12px; color:#8e8e9e; margin-bottom:8px;">📊 История спринтов</div>';
+            sprints.slice().reverse().forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `${s.date} — ${s.duration} мин: ${s.task.substring(0, 30)}`;
+                container.appendChild(div);
+            });
+        }
+
+        document.querySelectorAll('.duration-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.duration-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentDuration = parseInt(btn.dataset.duration);
+            });
+        });
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(sprintRemaining / 60);
+            const secs = sprintRemaining % 60;
+            document.getElementById('timerDisplay').innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        }
+
+        document.getElementById('startSprintBtn').addEventListener('click', () => {
+            const task = document.getElementById('sprintTask').value.trim();
+            if (!task) {
+                alert('Введите задачу для спринта!');
+                return;
+            }
+            sprintRemaining = currentDuration * 60;
+            document.getElementById('activeSprintTask').innerText = task;
+            updateTimerDisplay();
+            document.getElementById('sprintSetup').style.display = 'none';
+            document.getElementById('sprintActive').style.display = 'block';
+            sprintActive = true;
+            sprintPaused = false;
+            if (sprintTimer) clearInterval(sprintTimer);
+            sprintTimer = setInterval(() => {
+                if (!sprintActive || sprintPaused) return;
+                if (sprintRemaining > 0) {
+                    sprintRemaining--;
+                    updateTimerDisplay();
+                }
+                if (sprintRemaining === 0) {
+                    clearInterval(sprintTimer);
+                    sprintActive = false;
+                    sprints.unshift({
+                        date: new Date().toLocaleDateString('ru-RU'),
+                        duration: currentDuration,
+                        task: task
+                    });
+                    saveSprints();
+                    renderSprintHistory();
+                    document.getElementById('sprintSetup').style.display = 'block';
+                    document.getElementById('sprintActive').style.display = 'none';
+                    document.getElementById('sprintTask').value = '';
+                    alert('🎉 Спринт завершён! Молодец!');
+                }
+            }, 1000);
+        });
+
+        document.getElementById('pauseSprintBtn').addEventListener('click', () => {
+            if (!sprintActive) return;
+            sprintPaused = !sprintPaused;
+            document.getElementById('pauseSprintBtn').innerText = sprintPaused ? '▶️ Возобновить' : '⏸️ Пауза';
+        });
+
+        document.getElementById('stopSprintBtn').addEventListener('click', () => {
+            if (confirm('Завершить спринт досрочно? Прогресс не сохранится.')) {
+                clearInterval(sprintTimer);
+                sprintActive = false;
+                document.getElementById('sprintSetup').style.display = 'block';
+                document.getElementById('sprintActive').style.display = 'none';
+                document.getElementById('sprintTask').value = '';
+            }
+        });
+
+        loadTasks();
+        loadEmotions();
+        loadSprints();
+    </script>
+</body>
+</html>

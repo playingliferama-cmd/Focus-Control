@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>LS Control — Лекарства</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 14px 18px 12px 18px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 30px;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateX(-3px);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .add-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #FFD966;
+            cursor: pointer;
+        }
+
+        .scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .scroll-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .medication-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 14px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .med-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .med-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFD966;
+        }
+
+        .med-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .med-edit, .med-delete {
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .med-dosage {
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .med-schedule {
+            font-size: 12px;
+            color: #8e8e9e;
+            margin-bottom: 12px;
+        }
+
+        .med-reminder {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 8px;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reminder-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reminder-time {
+            font-size: 13px;
+            color: #FFD966;
+        }
+
+        .toggle-switch {
+            width: 40px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+        }
+
+        .toggle-switch.active {
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        .toggle-switch::after {
+            content: "";
+            width: 16px;
+            height: 16px;
+            background: #FFD966;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            transition: 0.2s;
+        }
+
+        .toggle-switch.active::after {
+            left: 21px;
+        }
+
+        .taken-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 11px;
+            color: #FFD966;
+            cursor: pointer;
+        }
+
+        .taken-btn.completed {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #6e6e7e;
+            padding: 40px 20px;
+        }
+
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 6px;
+            background: rgba(18, 18, 24, 0.9);
+            backdrop-filter: blur(20px);
+            border-top: 0.5px solid rgba(255,255,255,0.06);
+            margin-top: 12px;
+            border-radius: 32px;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: #6e6e7e;
+            font-size: 9px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px 12px;
+            border-radius: 30px;
+        }
+
+        .tab-item.active {
+            color: #ffd966;
+            background: rgba(255, 217, 102, 0.1);
+        }
+
+        .tab-icon {
+            font-size: 18px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1a1a24;
+            border-radius: 28px;
+            width: 300px;
+            padding: 20px;
+            border: 0.5px solid #FFD966;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFD966;
+            margin-bottom: 16px;
+        }
+
+        .modal input, .modal select {
+            width: 100%;
+            background: rgba(30, 30, 42, 0.8);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+
+        .modal-btn.save {
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD966;
+        }
+
+        .modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="section-header">
+                <div class="header-left">
+                    <div class="back-btn" onclick="location.href='fokus_body.html'">←</div>
+                    <div class="section-title">Лекарства</div>
+                </div>
+                <div class="add-btn" id="addMedicationBtn">➕ Добавить</div>
+            </div>
+
+            <div class="scroll-content" id="medicationsList"></div>
+
+            <div class="tab-bar">
+                <div class="tab-item" onclick="location.href='fokus_progress.html'">
+                    <span class="tab-icon">📈</span>
+                    <span>Прогресс</span>
+                </div>
+                <div class="tab-item active">
+                    <span class="tab-icon">💪</span>
+                    <span>Тело</span>
+                </div>
+                <div class="tab-item" onclick="location.href='fokus_profile.html'">
+                    <span class="tab-icon">👤</span>
+                    <span>Профиль</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="medicationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">➕ Добавить лекарство</div>
+            <input type="text" id="medName" placeholder="Название">
+            <input type="text" id="medDosage" placeholder="Дозировка (например: 100 мг)">
+            <input type="text" id="medTime" placeholder="Время приёма (например: 08:00, 20:00)">
+            <select id="medFrequency">
+                <option value="daily">Ежедневно</option>
+                <option value="weekly">По дням недели</option>
+                <option value="interval">С интервалом</option>
+            </select>
+            <div class="modal-buttons">
+                <div class="modal-btn save" id="saveMedicationBtn">Сохранить</div>
+                <div class="modal-btn cancel" id="closeModalBtn">Отмена</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let medications = [];
+
+        function loadData() {
+            const saved = localStorage.getItem('ls_control_medications');
+            if (saved) {
+                medications = JSON.parse(saved);
+            } else {
+                medications = [
+                    { id: 1, name: "Аспирин", dosage: "100 мг", time: "08:00, 20:00", frequency: "daily", reminderEnabled: true, taken: false, lastTakenDate: null },
+                    { id: 2, name: "Витамин D", dosage: "2000 МЕ", time: "09:00", frequency: "daily", reminderEnabled: true, taken: false, lastTakenDate: null }
+                ];
+            }
+            renderMedications();
+            checkReminders();
+        }
+
+        function saveData() {
+            localStorage.setItem('ls_control_medications', JSON.stringify(medications));
+            renderMedications();
+        }
+
+        function renderMedications() {
+            const container = document.getElementById('medicationsList');
+            if (!container) return;
+            container.innerHTML = '';
+            if (medications.length === 0) {
+                container.innerHTML = '<div class="empty-state">💊 Нет добавленных лекарств<br>Нажмите "➕ Добавить"</div>';
+                return;
+            }
+            medications.forEach(med => {
+                const today = new Date().toLocaleDateString('ru-RU');
+                const isTakenToday = med.lastTakenDate === today && med.taken;
+                const card = document.createElement('div');
+                card.className = 'medication-card';
+                card.innerHTML = `
+                    <div class="med-header">
+                        <span class="med-name">💊 ${escapeHtml(med.name)}</span>
+                        <div class="med-actions">
+                            <span class="med-edit" data-id="${med.id}">✏️</span>
+                            <span class="med-delete" data-id="${med.id}">🗑️</span>
+                        </div>
+                    </div>
+                    <div class="med-dosage">${escapeHtml(med.dosage)}</div>
+                    <div class="med-schedule">⏰ ${escapeHtml(med.time)} • ${med.frequency === 'daily' ? 'Ежедневно' : med.frequency === 'weekly' ? 'По дням недели' : 'С интервалом'}</div>
+                    <div class="med-reminder">
+                        <div class="reminder-toggle">
+                            <span class="reminder-time">🔔 Напоминание</span>
+                            <div class="toggle-switch ${med.reminderEnabled ? 'active' : ''}" data-id="${med.id}"></div>
+                        </div>
+                        <div class="taken-btn ${isTakenToday ? 'completed' : ''}" data-id="${med.id}">${isTakenToday ? '✅ Принято' : '💊 Отметить'}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.querySelectorAll('.med-edit').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const id = parseInt(el.dataset.id);
+                    const med = medications.find(m => m.id === id);
+                    if (med) {
+                        document.getElementById('modalTitle').innerText = '✏️ Редактировать';
+                        document.getElementById('medName').value = med.name;
+                        document.getElementById('medDosage').value = med.dosage;
+                        document.getElementById('medTime').value = med.time;
+                        document.getElementById('medFrequency').value = med.frequency;
+                        document.getElementById('medicationModal').dataset.editId = id;
+                        document.getElementById('medicationModal').style.display = 'flex';
+                    }
+                    e.stopPropagation();
+                });
+            });
+
+            document.querySelectorAll('.med-delete').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const id = parseInt(el.dataset.id);
+                    if (confirm('Удалить лекарство?')) {
+                        medications = medications.filter(m => m.id !== id);
+                        saveData();
+                    }
+                    e.stopPropagation();
+                });
+            });
+
+            document.querySelectorAll('.toggle-switch').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const id = parseInt(el.dataset.id);
+                    const med = medications.find(m => m.id === id);
+                    if (med) {
+                        med.reminderEnabled = !med.reminderEnabled;
+                        saveData();
+                        if (med.reminderEnabled) {
+                            requestNotificationPermission(med);
+                        }
+                    }
+                    e.stopPropagation();
+                });
+            });
+
+            document.querySelectorAll('.taken-btn').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const id = parseInt(el.dataset.id);
+                    const med = medications.find(m => m.id === id);
+                    if (med) {
+                        const today = new Date().toLocaleDateString('ru-RU');
+                        if (med.lastTakenDate === today && med.taken) {
+                            alert('Вы уже отметили приём на сегодня!');
+                        } else {
+                            med.taken = true;
+                            med.lastTakenDate = today;
+                            saveData();
+                            alert(`✅ ${med.name} принято!`);
+                        }
+                    }
+                    e.stopPropagation();
+                });
+            });
+        }
+
+        function requestNotificationPermission(med) {
+            if (Notification.permission === 'granted') {
+                scheduleReminder(med);
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') scheduleReminder(med);
+                });
+            }
+        }
+
+        function scheduleReminder(med) {
+            const times = med.time.split(',').map(t => t.trim());
+            times.forEach(time => {
+                const [hour, minute] = time.split(':').map(Number);
+                const now = new Date();
+                const reminderTime = new Date();
+                reminderTime.setHours(hour, minute, 0, 0);
+                if (reminderTime < now) reminderTime.setDate(reminderTime.getDate() + 1);
+                const delay = reminderTime - now;
+                setTimeout(() => {
+                    new Notification(`💊 Напоминание: ${med.name}`, {
+                        body: `Пора принять ${med.dosage}`,
+                        icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFD966"%3E%3Cpath d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 13c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z"/%3E%3C/svg%3E'
+                    });
+                }, delay);
+            });
+        }
+
+        function checkReminders() {
+            medications.forEach(med => {
+                if (med.reminderEnabled && Notification.permission === 'granted') {
+                    scheduleReminder(med);
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        document.getElementById('addMedicationBtn').addEventListener('click', () => {
+            document.getElementById('modalTitle').innerText = '➕ Добавить лекарство';
+            document.getElementById('medName').value = '';
+            document.getElementById('medDosage').value = '';
+            document.getElementById('medTime').value = '';
+            document.getElementById('medFrequency').value = 'daily';
+            delete document.getElementById('medicationModal').dataset.editId;
+            document.getElementById('medicationModal').style.display = 'flex';
+        });
+
+        document.getElementById('saveMedicationBtn').addEventListener('click', () => {
+            const name = document.getElementById('medName').value.trim();
+            const dosage = document.getElementById('medDosage').value.trim();
+            const time = document.getElementById('medTime').value.trim();
+            const frequency = document.getElementById('medFrequency').value;
+            if (!name || !dosage || !time) return;
+            const editId = document.getElementById('medicationModal').dataset.editId;
+            if (editId) {
+                const med = medications.find(m => m.id === parseInt(editId));
+                if (med) {
+                    med.name = name;
+                    med.dosage = dosage;
+                    med.time = time;
+                    med.frequency = frequency;
+                }
+            } else {
+                medications.push({
+                    id: Date.now(),
+                    name: name,
+                    dosage: dosage,
+                    time: time,
+                    frequency: frequency,
+                    reminderEnabled: true,
+                    taken: false,
+                    lastTakenDate: null
+                });
+            }
+            saveData();
+            document.getElementById('medicationModal').style.display = 'none';
+        });
+
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            document.getElementById('medicationModal').style.display = 'none';
+        });
+
+        if (Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — Оракул</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen {
+            flex: 1;
+            padding: 12px 16px 10px 16px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+            scrollbar-width: none;
+        }
+        .screen::-webkit-scrollbar { display: none; }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .back-btn {
+            font-size: 22px; cursor: pointer; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,215,0,0.08); border-radius: 30px;
+        }
+        .title {
+            font-size: 20px; font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .balance-badge {
+            background: rgba(255,215,0,0.1);
+            border: 0.5px solid rgba(255,215,0,0.3);
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: #FFD966;
+            cursor: pointer;
+        }
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .scroll-area::-webkit-scrollbar { display: none; }
+        .search-input {
+            width: 100%;
+            background: rgba(30,30,42,0.5);
+            border: 0.5px solid rgba(255,215,0,0.15);
+            border-radius: 30px;
+            padding: 8px 14px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            margin-bottom: 8px;
+        }
+        .search-input::placeholder { color: #6e6e7e; }
+        .filter-section {
+            background: rgba(30,30,42,0.3);
+            border-radius: 12px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+        }
+        .filter-label { font-size: 11px; color: #8e8e9e; margin-bottom: 4px; }
+        .filter-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+        .filter-chip {
+            background: rgba(255,255,255,0.05);
+            border: 0.5px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 11px;
+            color: #aaa;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+        .filter-chip.active { background: rgba(255,215,0,0.15); border-color: #FFD966; color: #FFD966; }
+        .filter-chip.all-active { background: rgba(255,215,0,0.08); border-color: rgba(255,215,0,0.3); color: #FFD966; }
+        .psychic-card {
+            background: rgba(30,30,42,0.5);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+        .psychic-card:active { transform: scale(0.98); }
+        .psychic-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .psychic-name { font-size: 15px; font-weight: 600; color: #FFD966; }
+        .psychic-rating { font-size: 13px; color: #FFD966; }
+        .psychic-categories { display: flex; gap: 4px; flex-wrap: wrap; margin: 4px 0; }
+        .psychic-cat-tag {
+            font-size: 9px;
+            background: rgba(255,215,0,0.1);
+            border: 0.5px solid rgba(255,215,0,0.15);
+            border-radius: 12px;
+            padding: 2px 8px;
+            color: #FFD966;
+        }
+        .psychic-desc { font-size: 11px; color: #aaa; margin: 4px 0; }
+        .psychic-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+        .psychic-price { font-size: 12px; color: #FFD966; }
+        .psychic-orders { font-size: 10px; color: #6e6e7e; }
+        .psychic-status { font-size: 10px; color: #4CAF50; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #6e6e7e; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="header-left">
+                    <div class="back-btn" onclick="location.href='index.html'">←</div>
+                    <div class="title">🔮 Оракул</div>
+                </div>
+                <div class="balance-badge" id="balanceBtn">💰 <span id="balanceDisplay">0</span> монет</div>
+            </div>
+
+            <div class="scroll-area">
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск по имени...">
+
+                <div class="filter-section">
+                    <div class="filter-label">📋 Категории</div>
+                    <div class="filter-grid" id="filterGrid"></div>
+                </div>
+
+                <div id="psychicsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categories = [
+            { id: 'tarot', label: 'Таролог' },
+            { id: 'astrology', label: 'Астролог' },
+            { id: 'numerology', label: 'Нумеролог' },
+            { id: 'lead_pour', label: 'Отлив свинцом' },
+            { id: 'runes', label: 'Рунолог' },
+            { id: 'palmistry', label: 'Хиромант' },
+            { id: 'clairvoyant', label: 'Ясновидящий' },
+            { id: 'shaman', label: 'Шаман' }
+        ];
+
+        let psychics = [
+            {
+                id: 1,
+                name: 'Мария Таролог',
+                rating: 4.9,
+                reviews: 128,
+                categories: ['tarot', 'astrology'],
+                description: 'Расклады Таро, астрология, отношения.',
+                price_from: 200,
+                orders_today: 2,
+                status: 'online'
+            },
+            {
+                id: 2,
+                name: 'Анна Астролог',
+                rating: 4.7,
+                reviews: 95,
+                categories: ['astrology', 'numerology'],
+                description: 'Натальные карты, прогнозы, совместимость.',
+                price_from: 300,
+                orders_today: 1,
+                status: 'online'
+            },
+            {
+                id: 3,
+                name: 'Виктория Нумеролог',
+                rating: 4.5,
+                reviews: 67,
+                categories: ['numerology'],
+                description: 'Числа судьбы, миссия, таланты.',
+                price_from: 150,
+                orders_today: 4,
+                status: 'offline'
+            },
+            {
+                id: 4,
+                name: 'Сергей Рунолог',
+                rating: 4.8,
+                reviews: 43,
+                categories: ['runes', 'shaman'],
+                description: 'Руны, шаманские практики, защита.',
+                price_from: 250,
+                orders_today: 0,
+                status: 'online'
+            }
+        ];
+
+        let selectedCategory = null;
+        let searchQuery = '';
+
+        function updateBalance() {
+            const coins = parseInt(localStorage.getItem('focus_coins')) || 0;
+            document.getElementById('balanceDisplay').innerText = coins;
+        }
+
+        function renderFilters() {
+            const grid = document.getElementById('filterGrid');
+            grid.innerHTML = '';
+            const allChip = document.createElement('div');
+            allChip.className = 'filter-chip' + (selectedCategory === null ? ' all-active' : '');
+            allChip.innerText = 'Все';
+            allChip.addEventListener('click', () => {
+                selectedCategory = null;
+                renderFilters();
+                renderPsychics();
+            });
+            grid.appendChild(allChip);
+            categories.forEach(cat => {
+                const chip = document.createElement('div');
+                chip.className = 'filter-chip' + (selectedCategory === cat.id ? ' active' : '');
+                chip.innerText = cat.label;
+                chip.addEventListener('click', () => {
+                    selectedCategory = selectedCategory === cat.id ? null : cat.id;
+                    renderFilters();
+                    renderPsychics();
+                });
+                grid.appendChild(chip);
+            });
+        }
+
+        function renderPsychics() {
+            const container = document.getElementById('psychicsList');
+            const query = searchQuery.toLowerCase().trim();
+            let filtered = psychics.filter(p => {
+                if (query && !p.name.toLowerCase().includes(query)) return false;
+                if (selectedCategory && !p.categories.includes(selectedCategory)) return false;
+                return true;
+            });
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state">🔮 Нет исполнителей по вашему запросу</div>`;
+                return;
+            }
+            container.innerHTML = '';
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'psychic-card';
+                card.addEventListener('click', () => {
+                    window.location.href = `psychic_profile.html?id=${p.id}`;
+                });
+                const catLabels = p.categories.map(id => {
+                    const cat = categories.find(c => c.id === id);
+                    return cat ? cat.label : id;
+                });
+                card.innerHTML = `
+                    <div class="psychic-header">
+                        <span class="psychic-name">${p.name}</span>
+                        <span class="psychic-rating">⭐ ${p.rating}</span>
+                    </div>
+                    <div class="psychic-categories">
+                        ${catLabels.map(label => `<span class="psychic-cat-tag">${label}</span>`).join('')}
+                    </div>
+                    <div class="psychic-desc">${p.description}</div>
+                    <div class="psychic-footer">
+                        <span class="psychic-price">🎯 От ${p.price_from} монет</span>
+                        <span class="psychic-orders">⏳ ${p.orders_today} заказов сегодня</span>
+                        <span class="psychic-status">${p.status === 'online' ? '🟢 Онлайн' : '🔴 Офлайн'}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            searchQuery = this.value;
+            renderPsychics();
+        });
+
+        document.getElementById('balanceBtn').addEventListener('click', () => {
+            window.location.href = 'shop.html';
+        });
+
+        updateBalance();
+        renderFilters();
+        renderPsychics();
+        window.addEventListener('storage', updateBalance);
+    </script>
+</body>
+</html>

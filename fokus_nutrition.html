@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — Питание</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen {
+            flex: 1;
+            padding: 14px 18px 12px 18px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .header-left { display: flex; align-items: center; gap: 8px; }
+        .back-btn {
+            font-size: 22px; cursor: pointer; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255, 215, 0, 0.08); border-radius: 30px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text; color: transparent;
+        }
+        .header-right { display: flex; gap: 4px; }
+        .icon-btn {
+            background: rgba(255, 215, 0, 0.08);
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            padding: 2px 5px;
+            font-size: 9px;
+            color: #FFD966;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .scroll-content {
+            flex: 1; overflow-y: auto; scrollbar-width: none;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .scroll-content::-webkit-scrollbar { display: none; }
+        .meal-block {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px; padding: 12px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+        }
+        .meal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .meal-title-block {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .meal-name { font-size: 16px; font-weight: 600; color: #FFD966; cursor: pointer; }
+        .meal-time-edit {
+            font-size: 11px;
+            color: #aaa;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 8px;
+            border-radius: 16px;
+            cursor: pointer;
+        }
+        .meal-reminder-toggle {
+            font-size: 14px;
+            cursor: pointer;
+            background: rgba(255,215,0,0.1);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+        }
+        .meal-reminder-toggle.active { background: rgba(255,215,0,0.3); }
+        .meal-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .meal-add {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px; padding: 4px 10px; font-size: 11px;
+            color: #FFD966; cursor: pointer;
+        }
+        .meal-delete {
+            background: rgba(255, 68, 68, 0.1);
+            border: 0.5px solid rgba(255, 68, 68, 0.3);
+            border-radius: 20px; padding: 4px 10px; font-size: 11px;
+            color: #ff4444; cursor: pointer;
+        }
+        .food-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 6px 0; border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+        }
+        .food-info { display: flex; align-items: center; gap: 10px; flex: 1; flex-wrap: wrap; }
+        .food-icon { font-size: 18px; }
+        .food-name { font-size: 13px; color: #fff; min-width: 100px; }
+        .food-nutrition { display: flex; gap: 8px; font-size: 10px; color: #aaa; flex-wrap: wrap; }
+        .food-nutrition span { color: #FFD966; }
+        .food-actions { display: flex; gap: 8px; }
+        .food-edit, .food-delete { font-size: 14px; cursor: pointer; opacity: 0.6; }
+        .meal-total {
+            text-align: right; font-size: 11px; color: #8e8e9e;
+            margin-top: 8px; padding-top: 6px;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        .meal-total span { color: #FFD966; font-weight: 600; }
+        .stats-summary {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px; padding: 12px;
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+        }
+        .stats-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .stats-label { font-size: 12px; color: #aaa; }
+        .stats-value { font-size: 14px; font-weight: 700; color: #FFD966; }
+        .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 4px; margin: 6px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #FFD966, #FFAA33); border-radius: 4px; width: 0%; }
+        
+        .tab-bar {
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 8px 0 6px; background: rgba(18, 18, 24, 0.9);
+            backdrop-filter: blur(20px); border-top: 0.5px solid rgba(255,255,255,0.06);
+            margin-top: 12px; border-radius: 32px;
+        }
+        .tab-item {
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            color: #6e6e7e; font-size: 9px; font-weight: 500; cursor: pointer;
+            padding: 4px 12px; border-radius: 30px;
+        }
+        .tab-item.active { color: #ffd966; background: rgba(255, 217, 102, 0.1); }
+        .tab-icon { font-size: 18px; }
+        
+        .modal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+            z-index: 100; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #1a1a24; border-radius: 28px; width: 340px;
+            padding: 20px; border: 0.5px solid #FFD966; max-height: 80%; overflow-y: auto;
+        }
+        .modal-title { font-size: 18px; font-weight: 600; color: #FFD966; margin-bottom: 16px; text-align: center; }
+        .modal input, .modal select {
+            width: 100%; background: rgba(30, 30, 42, 0.8);
+            border: 0.5px solid rgba(255, 215, 0, 0.3); border-radius: 20px;
+            padding: 10px 14px; color: #fff; font-size: 14px; margin-bottom: 8px;
+            outline: none;
+        }
+        .modal-buttons { display: flex; gap: 12px; margin-top: 16px; }
+        .modal-btn { flex: 1; text-align: center; padding: 10px; border-radius: 30px; cursor: pointer; }
+        .modal-btn.save { background: rgba(255, 215, 0, 0.15); color: #FFD966; }
+        .modal-btn.cancel { background: rgba(255, 255, 255, 0.1); color: #aaa; }
+        
+        .history-day-item {
+            padding: 8px; background: rgba(0,0,0,0.3); border-radius: 16px;
+            margin-bottom: 8px; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="section-header">
+                <div class="header-left">
+                    <div class="back-btn" onclick="location.href='fokus_body.html'">←</div>
+                    <div class="section-title">Питание</div>
+                </div>
+                <div class="header-right">
+                    <div class="icon-btn" onclick="location.href='fokus_nutrition_history.html'">📅 История</div>
+                    <div class="icon-btn" id="copyBtn">📋 Копировать</div>
+                    <div class="icon-btn" id="planBtn">📅 План</div>
+                </div>
+            </div>
+
+            <div class="scroll-content" id="mealsContainer"></div>
+
+            <div class="stats-summary">
+                <div class="stats-row"><span class="stats-label">🔥 Калории</span><span class="stats-value" id="totalCalories">0</span><span class="stats-label">/ 2200 ккал</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="caloriesFill" style="width:0%"></div></div>
+                <div class="stats-row"><span class="stats-label">🥩 Белки</span><span class="stats-value" id="totalProtein">0</span><span class="stats-label">г / 150г</span></div>
+                <div class="stats-row"><span class="stats-label">🧈 Жиры</span><span class="stats-value" id="totalFat">0</span><span class="stats-label">г / 70г</span></div>
+                <div class="stats-row"><span class="stats-label">🍚 Углеводы</span><span class="stats-value" id="totalCarbs">0</span><span class="stats-label">г / 250г</span></div>
+            </div>
+
+            <div class="tab-bar">
+                <div class="tab-item" onclick="location.href='fokus_progress.html'"><span class="tab-icon">📈</span><span>Прогресс</span></div>
+                <div class="tab-item active"><span class="tab-icon">💪</span><span>Тело</span></div>
+                <div class="tab-item" onclick="location.href='fokus_profile.html'"><span class="tab-icon">👤</span><span>Профиль</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка добавления/редактирования блюда -->
+    <div id="foodModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="foodModalTitle">➕ Добавить блюдо</div>
+            <input type="text" id="foodName" placeholder="Название">
+            <input type="number" id="foodCalories" placeholder="Калории (ккал)">
+            <input type="number" id="foodProtein" placeholder="Белки (г)">
+            <input type="number" id="foodFat" placeholder="Жиры (г)">
+            <input type="number" id="foodCarbs" placeholder="Углеводы (г)">
+            <select id="foodInputType">
+                <option value="manual">✏️ Ручной ввод</option>
+                <option value="ai">📸 По фото (ИИ)</option>
+            </select>
+            <div class="modal-buttons">
+                <div class="modal-btn save" id="saveFoodBtn">Сохранить</div>
+                <div class="modal-btn cancel" id="closeModalBtn">Отмена</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка копирования -->
+    <div id="copyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">📋 Копировать рацион</div>
+            <div id="copyDaysList" style="max-height: 300px; overflow-y: auto;"></div>
+            <div class="modal-buttons">
+                <div class="modal-btn cancel" id="closeCopyBtn">Отмена</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== СТРУКТУРА (взято из твоего рабочего кода) ==========
+        let meals = {
+            breakfast: { name: "🌅 Завтрак", time: "08:30", reminderEnabled: false, reminderTimers: [], items: [], total: { calories: 0, protein: 0, fat: 0, carbs: 0 } },
+            snack1: { name: "🍏 Перекус 1", time: "11:00", reminderEnabled: false, reminderTimers: [], items: [], total: { calories: 0, protein: 0, fat: 0, carbs: 0 } },
+            lunch: { name: "☀️ Обед", time: "14:00", reminderEnabled: false, reminderTimers: [], items: [], total: { calories: 0, protein: 0, fat: 0, carbs: 0 } },
+            snack2: { name: "🍎 Перекус 2", time: "17:00", reminderEnabled: false, reminderTimers: [], items: [], total: { calories: 0, protein: 0, fat: 0, carbs: 0 } },
+            dinner: { name: "🌙 Ужин", time: "20:00", reminderEnabled: false, reminderTimers: [], items: [], total: { calories: 0, protein: 0, fat: 0, carbs: 0 } }
+        };
+        
+        let currentMealId = null;
+        let editingFoodId = null;
+        
+        // ========== УВЕДОМЛЕНИЯ ==========
+        function requestNotificationPermission() {
+            if (Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+        
+        function scheduleMealReminder(mealId) {
+            const meal = meals[mealId];
+            if (!meal.reminderEnabled) return;
+            if (meal.reminderTimers) {
+                meal.reminderTimers.forEach(timer => clearTimeout(timer));
+                meal.reminderTimers = [];
+            }
+            const [hour, minute] = meal.time.split(':').map(Number);
+            const now = new Date();
+            const reminderTime = new Date();
+            reminderTime.setHours(hour, minute, 0, 0);
+            if (reminderTime < now) {
+                reminderTime.setDate(reminderTime.getDate() + 1);
+            }
+            const timeUntil = reminderTime - now;
+            const timeUntil15 = timeUntil - 15 * 60 * 1000;
+            const timeUntil5 = timeUntil - 5 * 60 * 1000;
+            
+            if (timeUntil15 > 0) {
+                const timer15 = setTimeout(() => {
+                    new Notification(`🍽️ Напоминание: ${meal.name} через 15 минут`, {
+                        body: `Приём пищи в ${meal.time}. Пора готовиться!`,
+                    });
+                }, timeUntil15);
+                meal.reminderTimers.push(timer15);
+            }
+            if (timeUntil5 > 0) {
+                const timer5 = setTimeout(() => {
+                    new Notification(`🍽️ Напоминание: ${meal.name} через 5 минут`, {
+                        body: `Приём пищи в ${meal.time}. Не пропустите!`,
+                    });
+                }, timeUntil5);
+                meal.reminderTimers.push(timer5);
+            }
+        }
+        
+        function rescheduleAllReminders() {
+            for (let mealId in meals) scheduleMealReminder(mealId);
+        }
+        
+        // ========== ОСНОВНАЯ ЛОГИКА (ТВОЙ КОД) ==========
+        function loadMeals() {
+            const saved = localStorage.getItem('focus_nutrition_meals_v5');
+            if (saved) {
+                const data = JSON.parse(saved);
+                for (let mealId in data) {
+                    if (meals[mealId]) {
+                        meals[mealId].name = data[mealId].name || meals[mealId].name;
+                        meals[mealId].time = data[mealId].time || meals[mealId].time;
+                        meals[mealId].reminderEnabled = data[mealId].reminderEnabled || false;
+                        meals[mealId].items = data[mealId].items || [];
+                        meals[mealId].total = data[mealId].total || { calories: 0, protein: 0, fat: 0, carbs: 0 };
+                    }
+                }
+            }
+            // Если нет сохранённых данных — добавляем демо-блюда
+            if (meals.breakfast.items.length === 0) {
+                meals.breakfast.items = [{ id: 1, name: "Овсянка с фруктами", calories: 450, protein: 15, fat: 8, carbs: 60, icon: "🥣" }];
+                meals.breakfast.total = { calories: 450, protein: 15, fat: 8, carbs: 60 };
+                meals.snack1.items = [{ id: 2, name: "Яблоко", calories: 50, protein: 1, fat: 0, carbs: 12, icon: "🍎" }];
+                meals.snack1.total = { calories: 50, protein: 1, fat: 0, carbs: 12 };
+                meals.lunch.items = [{ id: 3, name: "Курица с гречкой", calories: 550, protein: 40, fat: 12, carbs: 45, icon: "🍗" }];
+                meals.lunch.total = { calories: 550, protein: 40, fat: 12, carbs: 45 };
+                meals.snack2.items = [{ id: 4, name: "Орехи", calories: 150, protein: 5, fat: 12, carbs: 6, icon: "🥜" }];
+                meals.snack2.total = { calories: 150, protein: 5, fat: 12, carbs: 6 };
+                meals.dinner.items = [{ id: 5, name: "Рыба с овощами", calories: 400, protein: 35, fat: 15, carbs: 20, icon: "🐟" }];
+                meals.dinner.total = { calories: 400, protein: 35, fat: 15, carbs: 20 };
+                recalcAllTotals();
+                saveMeals();
+            }
+            renderAllMeals();
+            rescheduleAllReminders();
+        }
+        
+        function recalcAllTotals() {
+            for (let mealId in meals) {
+                let cal = 0, prot = 0, fat = 0, carb = 0;
+                meals[mealId].items.forEach(item => {
+                    cal += item.calories || 0;
+                    prot += item.protein || 0;
+                    fat += item.fat || 0;
+                    carb += item.carbs || 0;
+                });
+                meals[mealId].total = { calories: cal, protein: prot, fat: fat, carbs: carb };
+            }
+        }
+        
+        function saveMeals() {
+            recalcAllTotals();
+            const toSave = {};
+            for (let mealId in meals) {
+                toSave[mealId] = {
+                    name: meals[mealId].name,
+                    time: meals[mealId].time,
+                    reminderEnabled: meals[mealId].reminderEnabled,
+                    items: meals[mealId].items,
+                    total: meals[mealId].total
+                };
+            }
+            localStorage.setItem('focus_nutrition_meals_v5', JSON.stringify(toSave));
+            saveCurrentDayToHistory();
+            updateDayTotals();
+        }
+        
+        function updateDayTotals() {
+            let totalCal = 0, totalProt = 0, totalFat = 0, totalCarb = 0;
+            for (let mealId in meals) {
+                totalCal += meals[mealId].total.calories;
+                totalProt += meals[mealId].total.protein;
+                totalFat += meals[mealId].total.fat;
+                totalCarb += meals[mealId].total.carbs;
+            }
+            document.getElementById('totalCalories').innerText = totalCal;
+            document.getElementById('totalProtein').innerText = totalProt;
+            document.getElementById('totalFat').innerText = totalFat;
+            document.getElementById('totalCarbs').innerText = totalCarb;
+            const calPercent = Math.min(100, (totalCal / 2200) * 100);
+            document.getElementById('caloriesFill').style.width = calPercent + '%';
+        }
+        
+        function renderAllMeals() {
+            const container = document.getElementById('mealsContainer');
+            container.innerHTML = '';
+            for (let mealId in meals) {
+                const meal = meals[mealId];
+                const mealDiv = document.createElement('div');
+                mealDiv.className = 'meal-block';
+                mealDiv.dataset.meal = mealId;
+                mealDiv.innerHTML = `
+                    <div class="meal-header">
+                        <div class="meal-title-block">
+                            <span class="meal-name" data-meal="${mealId}">${meal.name}</span>
+                            <span class="meal-time-edit" data-meal="${mealId}">⏰ ${meal.time}</span>
+                            <span class="meal-reminder-toggle ${meal.reminderEnabled ? 'active' : ''}" data-meal="${mealId}">🔔</span>
+                        </div>
+                        <div class="meal-actions">
+                            <button class="meal-add" data-meal="${mealId}">+ блюдо</button>
+                            <button class="meal-delete" data-meal="${mealId}">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="food-list" data-meal="${mealId}"></div>
+                    <div class="meal-total">
+                        Итого: ${meal.total.calories} ккал | 
+                        🥩 ${meal.total.protein}г | 
+                        🧈 ${meal.total.fat}г | 
+                        🍚 ${meal.total.carbs}г
+                    </div>
+                `;
+                container.appendChild(mealDiv);
+                
+                const foodList = mealDiv.querySelector('.food-list');
+                meal.items.forEach(item => {
+                    const foodDiv = document.createElement('div');
+                    foodDiv.className = 'food-item';
+                    foodDiv.innerHTML = `
+                        <div class="food-info">
+                            <span class="food-icon">${item.icon || '🍽️'}</span>
+                            <span class="food-name">${escapeHtml(item.name)}</span>
+                            <div class="food-nutrition">
+                                <span>${item.calories} ккал</span>
+                                <span>🥩${item.protein || 0}</span>
+                                <span>🧈${item.fat || 0}</span>
+                                <span>🍚${item.carbs || 0}</span>
+                            </div>
+                        </div>
+                        <div class="food-actions">
+                            <span class="food-edit" data-meal="${mealId}" data-id="${item.id}">✏️</span>
+                            <span class="food-delete" data-meal="${mealId}" data-id="${item.id}">🗑️</span>
+                        </div>
+                    `;
+                    foodList.appendChild(foodDiv);
+                });
+            }
+            attachHandlers();
+        }
+        
+        function attachHandlers() {
+            document.querySelectorAll('.meal-name').forEach(el => {
+                el.addEventListener('click', () => {
+                    const mealId = el.dataset.meal;
+                    const newName = prompt('Новое название приёма пищи:', meals[mealId].name);
+                    if (newName) meals[mealId].name = newName;
+                    saveMeals();
+                    renderAllMeals();
+                });
+            });
+            
+            document.querySelectorAll('.meal-time-edit').forEach(el => {
+                el.addEventListener('click', () => {
+                    const mealId = el.dataset.meal;
+                    const newTime = prompt('Введите время приёма пищи (ЧЧ:ММ):', meals[mealId].time);
+                    if (newTime && /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/.test(newTime)) {
+                        meals[mealId].time = newTime;
+                        saveMeals();
+                        scheduleMealReminder(mealId);
+                        renderAllMeals();
+                    } else if (newTime) alert('Неверный формат времени. Используйте ЧЧ:ММ');
+                });
+            });
+            
+            document.querySelectorAll('.meal-reminder-toggle').forEach(el => {
+                el.addEventListener('click', () => {
+                    const mealId = el.dataset.meal;
+                    requestNotificationPermission();
+                    meals[mealId].reminderEnabled = !meals[mealId].reminderEnabled;
+                    if (meals[mealId].reminderEnabled) scheduleMealReminder(mealId);
+                    else if (meals[mealId].reminderTimers) meals[mealId].reminderTimers.forEach(t => clearTimeout(t));
+                    saveMeals();
+                    renderAllMeals();
+                });
+            });
+            
+            document.querySelectorAll('.meal-add').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    currentMealId = btn.dataset.meal;
+                    editingFoodId = null;
+                    document.getElementById('foodModalTitle').innerText = '➕ Добавить блюдо';
+                    document.getElementById('foodName').value = '';
+                    document.getElementById('foodCalories').value = '';
+                    document.getElementById('foodProtein').value = '';
+                    document.getElementById('foodFat').value = '';
+                    document.getElementById('foodCarbs').value = '';
+                    document.getElementById('foodModal').style.display = 'flex';
+                    e.stopPropagation();
+                });
+            });
+            
+            document.querySelectorAll('.meal-delete').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const mealId = btn.dataset.meal;
+                    if (confirm(`Удалить приём пищи "${meals[mealId].name}"? Все блюда будут удалены.`)) {
+                        meals[mealId].items = [];
+                        meals[mealId].total = { calories: 0, protein: 0, fat: 0, carbs: 0 };
+                        if (meals[mealId].reminderTimers) meals[mealId].reminderTimers.forEach(t => clearTimeout(t));
+                        meals[mealId].reminderEnabled = false;
+                        saveMeals();
+                        renderAllMeals();
+                    }
+                    e.stopPropagation();
+                });
+            });
+            
+            document.querySelectorAll('.food-edit').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const mealId = el.dataset.meal;
+                    const id = parseInt(el.dataset.id);
+                    const item = meals[mealId].items.find(i => i.id === id);
+                    if (item) {
+                        currentMealId = mealId;
+                        editingFoodId = id;
+                        document.getElementById('foodModalTitle').innerText = '✏️ Редактировать блюдо';
+                        document.getElementById('foodName').value = item.name;
+                        document.getElementById('foodCalories').value = item.calories;
+                        document.getElementById('foodProtein').value = item.protein || 0;
+                        document.getElementById('foodFat').value = item.fat || 0;
+                        document.getElementById('foodCarbs').value = item.carbs || 0;
+                        document.getElementById('foodModal').style.display = 'flex';
+                    }
+                    e.stopPropagation();
+                });
+            });
+            
+            document.querySelectorAll('.food-delete').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const mealId = el.dataset.meal;
+                    const id = parseInt(el.dataset.id);
+                    meals[mealId].items = meals[mealId].items.filter(i => i.id !== id);
+                    saveMeals();
+                    renderAllMeals();
+                    e.stopPropagation();
+                });
+            });
+        }
+        
+        function saveCurrentDayToHistory() {
+            const today = new Date().toISOString().slice(0,10);
+            const history = {};
+            for (let mealId in meals) {
+                history[mealId] = {
+                    name: meals[mealId].name,
+                    time: meals[mealId].time,
+                    items: meals[mealId].items.map(i => ({ ...i })),
+                    total: { ...meals[mealId].total }
+                };
+            }
+            localStorage.setItem(`meal_history_${today}`, JSON.stringify(history));
+        }
+        
+        function loadHistoryForDay(dateKey) {
+            const saved = localStorage.getItem(`meal_history_${dateKey}`);
+            return saved ? JSON.parse(saved) : null;
+        }
+        
+        function getAllHistoryDays() {
+            const days = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('meal_history_')) days.push(key.replace('meal_history_', ''));
+            }
+            return days.sort().reverse();
+        }
+        
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const days = getAllHistoryDays();
+            const container = document.getElementById('copyDaysList');
+            container.innerHTML = '';
+            if (days.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:20px;">Нет сохранённых дней</div>';
+            } else {
+                days.forEach(day => {
+                    const dayDiv = document.createElement('div');
+                    dayDiv.className = 'history-day-item';
+                    dayDiv.innerHTML = `<div style="color:#FFD966;">📅 ${day}</div>`;
+                    dayDiv.addEventListener('click', () => {
+                        const historyData = loadHistoryForDay(day);
+                        if (historyData) {
+                            for (let mealId in historyData) {
+                                if (meals[mealId]) {
+                                    meals[mealId].items = historyData[mealId].items.map(i => ({ ...i }));
+                                    meals[mealId].total = { ...historyData[mealId].total };
+                                }
+                            }
+                            saveMeals();
+                            renderAllMeals();
+                            alert(`Рацион скопирован с ${day}`);
+                            document.getElementById('copyModal').style.display = 'none';
+                        }
+                    });
+                    container.appendChild(dayDiv);
+                });
+            }
+            document.getElementById('copyModal').style.display = 'flex';
+        });
+        
+        document.getElementById('closeCopyBtn').addEventListener('click', () => {
+            document.getElementById('copyModal').style.display = 'none';
+        });
+        
+        document.getElementById('planBtn').addEventListener('click', () => {
+            window.location.href = 'fokus_nutrition_plan.html';
+        });
+        
+        document.getElementById('saveFoodBtn').addEventListener('click', () => {
+            const name = document.getElementById('foodName').value.trim();
+            const calories = parseInt(document.getElementById('foodCalories').value) || 0;
+            const protein = parseInt(document.getElementById('foodProtein').value) || 0;
+            const fat = parseInt(document.getElementById('foodFat').value) || 0;
+            const carbs = parseInt(document.getElementById('foodCarbs').value) || 0;
+            const inputType = document.getElementById('foodInputType').value;
+            if (!name) { alert('Введите название блюда'); return; }
+            if (inputType === 'ai') alert('🤖 ИИ-анализ по фото: в реальном приложении здесь будет распознавание блюда по фото.');
+            if (editingFoodId) {
+                const item = meals[currentMealId].items.find(i => i.id === editingFoodId);
+                if (item) { item.name = name; item.calories = calories; item.protein = protein; item.fat = fat; item.carbs = carbs; }
+            } else {
+                meals[currentMealId].items.push({ id: Date.now(), name, calories, protein, fat, carbs, icon: '🍽️' });
+            }
+            saveMeals();
+            renderAllMeals();
+            document.getElementById('foodModal').style.display = 'none';
+        });
+        
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            document.getElementById('foodModal').style.display = 'none';
+        });
+        
+        function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+        
+        loadMeals();
+    </script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — главный</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+        }
+
+        .content-wrapper {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .top-row {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .balance-left {
+            text-align: left;
+            z-index: 2;
+        }
+
+        .balance-label {
+            font-size: 11px;
+            color: #8e8e9e;
+            margin-bottom: 2px;
+        }
+
+        .balance-coins {
+            font-size: 15px;
+            font-weight: 600;
+            color: #FFD966;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .balance-rub {
+            font-size: 11px;
+            color: #8e8e9e;
+            margin-top: 2px;
+        }
+
+        .logo-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 1;
+        }
+
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto;
+        }
+
+        .logo-text {
+            font-size: 30px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-top: 4px;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .greeting span {
+            color: #FFD966;
+            font-weight: 600;
+        }
+
+        .menu-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 24px;
+            padding: 14px;
+            margin-bottom: 12px;
+            text-align: center;
+            cursor: pointer;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+            transition: 0.2s;
+        }
+
+        .menu-card:active {
+            transform: scale(0.98);
+        }
+
+        .menu-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #FFD966;
+            margin-bottom: 6px;
+        }
+
+        .menu-desc {
+            font-size: 11px;
+            color: #aaa;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #FFD966, #FFAA33);
+            border: none;
+            border-radius: 50px;
+            padding: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: #0a0a0f;
+            cursor: pointer;
+            margin: 40px 0 20px 0;
+            transition: 0.2s;
+        }
+
+        .start-btn:active {
+            transform: scale(0.98);
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: rgba(18, 18, 24, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 8px 0;
+            margin-top: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: #6e6e7e;
+            font-size: 10px;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 30px;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        .demo-banner {
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 20px;
+            padding: 6px 12px;
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 10px;
+            color: #FFD966;
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .coin-particle {
+            position: fixed;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #FFD966, #FFAA33);
+            border-radius: 50%;
+            box-shadow: 0 0 6px gold;
+            animation: flyToBalance 0.8s ease-out forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes flyToBalance {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-120px) translateX(-80px) scale(0.2); opacity: 0; }
+        }
+
+        .coin-notification {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            border: 1px solid gold;
+            border-radius: 30px;
+            padding: 10px 20px;
+            text-align: center;
+            color: gold;
+            font-weight: bold;
+            z-index: 1001;
+            animation: fadeOut 1.8s forwards;
+            pointer-events: none;
+            font-size: 14px;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -80%) scale(0.8); }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div id="demoBanner" class="demo-banner" style="display: none;">
+                🔍 ДЕМО-РЕЖИМ: данные не сохраняются. <span id="demoTimer"></span>
+            </div>
+
+            <div class="content-wrapper">
+                <div class="top-row">
+                    <div class="balance-left">
+                        <div class="balance-label">БАЛАНС</div>
+                        <div class="balance-coins">
+                            <span>🪙</span>
+                            <span id="balanceCoins">0</span>
+                            <span>F-coins</span>
+                        </div>
+                        <div class="balance-rub" id="balanceRub">0 ₽</div>
+                    </div>
+                    <div class="logo-center">
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g stroke="#FFD966" stroke-width="0.8" stroke-linecap="round" opacity="0.4">
+                                    <line x1="50" y1="10" x2="50" y2="20" />
+                                    <line x1="50" y1="80" x2="50" y2="90" />
+                                    <line x1="10" y1="50" x2="20" y2="50" />
+                                    <line x1="80" y1="50" x2="90" y2="50" />
+                                    <line x1="22" y1="22" x2="29" y2="29" />
+                                    <line x1="71" y1="71" x2="78" y2="78" />
+                                    <line x1="22" y1="78" x2="29" y2="71" />
+                                    <line x1="71" y1="29" x2="78" y2="22" />
+                                </g>
+                                <circle cx="50" cy="50" r="28" stroke="#FFD966" stroke-width="1.2" fill="none" opacity="0.6"/>
+                                <circle cx="50" cy="50" r="22" stroke="#FFD966" stroke-width="0.6" fill="none" opacity="0.3"/>
+                                <path d="M40 48 Q46 43 50 43 Q54 43 60 48 Q54 55 50 55 Q46 55 40 48 Z" fill="#FFD966" fill-opacity="0.15" stroke="#FFD966" stroke-width="1"/>
+                                <circle cx="50" cy="49" r="3.5" fill="#FFD966" fill-opacity="0.5"/>
+                                <circle cx="50" cy="49" r="1.2" fill="#FFFFFF"/>
+                            </svg>
+                        </div>
+                        <div class="logo-text">FOCUS</div>
+                    </div>
+                </div>
+
+                <div class="welcome">
+                    <div class="greeting">Привет, <span id="userName">Александр</span>!</div>
+                </div>
+
+                <div class="menu-card" id="shopCard">
+                    <div class="menu-title">МАГАЗИН</div>
+                    <div class="menu-desc">Подписки · F-coins</div>
+                </div>
+
+                <div class="menu-card" id="statusCard">
+                    <div class="menu-title">ПРОВЕРКА УСЛОВИЙ</div>
+                    <div class="menu-desc">Бесплатный доступ</div>
+                </div>
+
+                <div class="menu-card" id="inviteCard">
+                    <div class="menu-title">ПРИГЛАСИТЬ ДРУГА</div>
+                    <div class="menu-desc">Приглашай друзей → зарабатывай F-coins → пользуйся бесплатно</div>
+                </div>
+
+                <button class="start-btn" id="startBtn">НАЧАТЬ</button>
+
+                <div class="bottom-nav">
+                    <div class="nav-item" id="progressNav">
+                        <span class="nav-icon">📈</span>
+                        <span>Прогресс</span>
+                    </div>
+                    <div class="nav-item" id="sectionsNav">
+                        <span class="nav-icon">🌀</span>
+                        <span>Сферы</span>
+                    </div>
+                    <div class="nav-item" id="profileNav">
+                        <span class="nav-icon">👤</span>
+                        <span>Профиль</span>
+                    </div>
+                    <div class="nav-item" id="notificationsNav">
+                        <span class="nav-icon">🔔</span>
+                        <span>Уведомления</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function playCoinSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = 880;
+                gainNode.gain.value = 0.15;
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.4);
+                oscillator.stop(audioCtx.currentTime + 0.4);
+            } catch(e) { console.log('Звук не поддерживается'); }
+        }
+
+        function showCoinAnimation(amount, reason) {
+            const notification = document.createElement('div');
+            notification.className = 'coin-notification';
+            notification.innerHTML = `+${amount} F-coins<br><span style="font-size:10px;">${reason}</span>`;
+            document.body.appendChild(notification);
+            for (let i = 0; i < 10; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'coin-particle';
+                coin.style.left = Math.random() * window.innerWidth + 'px';
+                coin.style.top = window.innerHeight / 2 + (Math.random() - 0.5) * 100 + 'px';
+                coin.style.animationDelay = Math.random() * 0.3 + 's';
+                document.body.appendChild(coin);
+                setTimeout(() => coin.remove(), 800);
+            }
+            playCoinSound();
+            setTimeout(() => notification.remove(), 1800);
+        }
+
+        const userName = localStorage.getItem('focus_user_name') || 'Александр';
+        document.getElementById('userName').innerText = userName;
+
+        let balance = parseInt(localStorage.getItem('focus_coins')) || 1250;
+        function updateBalanceUI() {
+            document.getElementById('balanceCoins').innerText = balance;
+            document.getElementById('balanceRub').innerText = balance + ' ₽';
+            localStorage.setItem('focus_coins', balance);
+        }
+        updateBalanceUI();
+
+        const isDemo = localStorage.getItem('focus_demo_mode') === 'true';
+        if (isDemo) {
+            document.getElementById('demoBanner').style.display = 'block';
+            let demoTime = 30 * 60;
+            const timerEl = document.getElementById('demoTimer');
+            const interval = setInterval(() => {
+                const mins = Math.floor(demoTime / 60);
+                const secs = demoTime % 60;
+                timerEl.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+                if (demoTime <= 0) {
+                    clearInterval(interval);
+                    alert('Демо-режим закончился. Подтвердите email, чтобы продолжить.');
+                    localStorage.removeItem('focus_demo_mode');
+                    window.location.href = 'confirm.html';
+                }
+                demoTime--;
+            }, 1000);
+        }
+
+        document.getElementById('shopCard').addEventListener('click', () => window.location.href = 'shop.html');
+        document.getElementById('statusCard').addEventListener('click', () => window.location.href = 'status.html');
+        document.getElementById('inviteCard').addEventListener('click', () => window.location.href = 'invite.html');
+        document.getElementById('startBtn').addEventListener('click', () => window.location.href = 'index.html');
+        document.getElementById('progressNav').addEventListener('click', () => window.location.href = 'status.html');
+        document.getElementById('sectionsNav').addEventListener('click', () => window.location.href = 'index.html');
+        document.getElementById('profileNav').addEventListener('click', () => window.location.href = 'profile-form.html');
+        document.getElementById('notificationsNav').addEventListener('click', () => window.location.href = 'notifications.html');
+    </script>
+</body>
+</html>

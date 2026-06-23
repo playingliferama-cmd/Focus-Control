@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — Оракул</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen {
+            flex: 1;
+            padding: 12px 16px 10px 16px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+            scrollbar-width: none;
+        }
+        .screen::-webkit-scrollbar { display: none; }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .back-btn {
+            font-size: 22px; cursor: pointer; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,215,0,0.08); border-radius: 30px;
+        }
+        .title {
+            font-size: 20px; font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .scroll-area::-webkit-scrollbar { display: none; }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(30,30,42,0.5);
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+        .menu-item:active { transform: scale(0.98); }
+        .menu-item:hover { border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.05); }
+        .menu-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 28px; }
+        .menu-text { display: flex; flex-direction: column; }
+        .menu-title { font-size: 15px; font-weight: 600; color: #fff; }
+        .menu-sub { font-size: 11px; color: #8e8e9e; }
+        .menu-arrow { font-size: 18px; color: #FFD966; opacity: 0.5; }
+
+        .become-btn {
+            background: rgba(255,215,0,0.08);
+            border: 0.5px solid rgba(255,215,0,0.2);
+            border-radius: 30px;
+            padding: 10px;
+            text-align: center;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: 0.3s ease;
+        }
+        .become-btn:active { transform: scale(0.97); }
+        .become-btn:hover { background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.4); }
+
+        .section-label {
+            font-size: 12px;
+            color: #8e8e9e;
+            margin: 8px 0 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='index.html'">←</div>
+                <div class="title">🔮 Оракул</div>
+            </div>
+
+            <div class="scroll-area">
+                <div class="section-label">📋 РАЗДЕЛЫ</div>
+
+                <!-- Астрология -->
+                <div class="menu-item" onclick="location.href='fokus_astrology.html'">
+                    <div class="menu-left">
+                        <div class="menu-icon">🌟</div>
+                        <div class="menu-text">
+                            <div class="menu-title">Астрология</div>
+                            <div class="menu-sub">Гороскоп, знак зодиака</div>
+                        </div>
+                    </div>
+                    <div class="menu-arrow">→</div>
+                </div>
+
+                <!-- Нумерология -->
+                <div class="menu-item" onclick="location.href='fokus_numerology.html'">
+                    <div class="menu-left">
+                        <div class="menu-icon">🔢</div>
+                        <div class="menu-text">
+                            <div class="menu-title">Нумерология</div>
+                            <div class="menu-sub">Число судьбы, совместимость</div>
+                        </div>
+                    </div>
+                    <div class="menu-arrow">→</div>
+                </div>
+
+                <!-- Оракул (список исполнителей) -->
+                <div class="menu-item" onclick="location.href='fokus_oracle.html'">
+                    <div class="menu-left">
+                        <div class="menu-icon">🧙‍♂️</div>
+                        <div class="menu-text">
+                            <div class="menu-title">Оракул</div>
+                            <div class="menu-sub">Заказать разбор у предсказателя</div>
+                        </div>
+                    </div>
+                    <div class="menu-arrow">→</div>
+                </div>
+
+                <div class="section-label" style="margin-top: 8px;">🧙‍♂️ ДЛЯ ИСПОЛНИТЕЛЕЙ</div>
+
+                <!-- Стать исполнителем -->
+                <div class="become-btn" id="becomePsychicBtn">📨 Стать исполнителем</div>
+
+                <!-- Кабинет исполнителя (появляется после одобрения) -->
+                <div class="become-btn" id="psychicDashboardBtn" style="display: none; background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.4);">
+                    🧙‍♂️ Кабинет исполнителя
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkPsychicRole() {
+            const userEmail = localStorage.getItem('focus_user_email');
+            const psychics = JSON.parse(localStorage.getItem('focus_approved_psychics') || '[]');
+            const isApproved = psychics.some(p => p.email === userEmail);
+            const isPsychic = localStorage.getItem('focus_user_role') === 'psychic';
+
+            if (isApproved || isPsychic) {
+                document.getElementById('psychicDashboardBtn').style.display = 'block';
+                document.getElementById('becomePsychicBtn').style.display = 'none';
+                localStorage.setItem('focus_user_role', 'psychic');
+            } else {
+                document.getElementById('psychicDashboardBtn').style.display = 'none';
+                document.getElementById('becomePsychicBtn').style.display = 'block';
+            }
+        }
+
+        document.getElementById('becomePsychicBtn').addEventListener('click', function() {
+            window.location.href = 'psychic_apply.html';
+        });
+
+        document.getElementById('psychicDashboardBtn').addEventListener('click', function() {
+            window.location.href = 'psychic_dashboard.html';
+        });
+
+        checkPsychicRole();
+    </script>
+</body>
+</html>

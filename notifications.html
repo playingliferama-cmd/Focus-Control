@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Уведомления — FOCUS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .screen::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 30px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Основные карточки с прокруткой */
+        .notify-window {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 24px;
+            margin-bottom: 20px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 380px;
+        }
+
+        .notify-header {
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 0.5px solid rgba(255, 215, 0, 0.1);
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFD966;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .scroll-area {
+            overflow-y: auto;
+            padding: 4px 0;
+            scrollbar-width: thin;
+        }
+
+        .scroll-area::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scroll-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scroll-area::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .notify-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .notify-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-area {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .item-desc {
+            font-size: 11px;
+            color: #8e8e9e;
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+
+        .toggle-switch.active {
+            background: rgba(255, 215, 0, 0.4);
+        }
+
+        .toggle-switch::after {
+            content: "";
+            width: 20px;
+            height: 20px;
+            background: #FFD966;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            transition: 0.2s;
+        }
+
+        .toggle-switch.active::after {
+            left: 25px;
+        }
+
+        .custom-time {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .time-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 4px 10px;
+            color: #FFD966;
+            font-size: 11px;
+            width: 85px;
+            text-align: center;
+        }
+
+        .set-time-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 4px 10px;
+            color: #FFD966;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .reset-btn {
+            background: rgba(255, 215, 0, 0.08);
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            padding: 12px;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='dashboard.html'">←</div>
+                <div class="title">Уведомления</div>
+            </div>
+
+            <!-- Окно 1: Для бесплатного доступа -->
+            <div class="notify-window">
+                <div class="notify-header">
+                    <span>🔔</span>
+                    <span>Для бесплатного доступа</span>
+                </div>
+                <div class="scroll-area">
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">💪 Зарядка</div>
+                            <div class="item-desc">Напомнить, если пропустил 2 дня</div>
+                        </div>
+                        <div class="toggle-switch active" id="workoutNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">😴 Сон</div>
+                            <div class="item-desc">Ежедневное напоминание</div>
+                            <div class="custom-time">
+                                <input type="time" class="time-input" id="sleepTime" value="22:00">
+                                <span class="set-time-btn" data-target="sleepTimeBtn">Сохранить</span>
+                            </div>
+                        </div>
+                        <div class="toggle-switch active" id="sleepNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">🙏 Благодарность</div>
+                            <div class="item-desc">Напомнить, если давно не писал</div>
+                            <div class="custom-time">
+                                <input type="time" class="time-input" id="gratitudeTime" value="21:00">
+                                <span class="set-time-btn" data-target="gratitudeTimeBtn">Сохранить</span>
+                            </div>
+                        </div>
+                        <div class="toggle-switch active" id="gratitudeNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">📋 Висяки</div>
+                            <div class="item-desc">Напомнить добавить новую задачу</div>
+                        </div>
+                        <div class="toggle-switch active" id="tasksNotify"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Окно 2: Все остальные разделы -->
+            <div class="notify-window">
+                <div class="notify-header">
+                    <span>⚙️</span>
+                    <span>Остальные уведомления</span>
+                </div>
+                <div class="scroll-area">
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">🍽️ Питание</div>
+                            <div class="item-desc">Напомнить, если 2 дня без записи</div>
+                        </div>
+                        <div class="toggle-switch active" id="mealNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">🏋️ Тренировки</div>
+                            <div class="item-desc">Напомнить, если 4 дня без активностей</div>
+                        </div>
+                        <div class="toggle-switch active" id="trainingNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">💊 Лекарства</div>
+                            <div class="item-desc">Пропущенный приём</div>
+                        </div>
+                        <div class="toggle-switch active" id="medicationsNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">🥤 БАДы и спортпит</div>
+                            <div class="item-desc">Пропущенный приём</div>
+                        </div>
+                        <div class="toggle-switch active" id="supplementsNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">😊 Дневник эмоций</div>
+                            <div class="item-desc">Напомнить, если 3 дня без записи</div>
+                        </div>
+                        <div class="toggle-switch active" id="emotionNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">🧘 Отдых (тишина)</div>
+                            <div class="item-desc">Напомнить, если 4 дня без отдыха</div>
+                        </div>
+                        <div class="toggle-switch active" id="restNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">📅 Задачи по людям</div>
+                            <div class="item-desc">Приближающийся дедлайн</div>
+                        </div>
+                        <div class="toggle-switch active" id="relationsNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">📌 Заметки и планы</div>
+                            <div class="item-desc">Напомнить о заметке</div>
+                        </div>
+                        <div class="toggle-switch active" id="businessNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">📊 Контроль трат</div>
+                            <div class="item-desc">Напомнить, если 5 дней без записей</div>
+                        </div>
+                        <div class="toggle-switch active" id="financeNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">🏆 Награды</div>
+                            <div class="item-desc">Напомнить, если неделя без наград</div>
+                        </div>
+                        <div class="toggle-switch active" id="rewardNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">👥 Активные приглашённые</div>
+                            <div class="item-desc">Напомнить, если друзей меньше 3</div>
+                        </div>
+                        <div class="toggle-switch active" id="activeFriendsNotify"></div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="info-area">
+                            <div class="item-name">💎 Премиум-приглашение</div>
+                            <div class="item-desc">Уведомление о бонусе</div>
+                        </div>
+                        <div class="toggle-switch active" id="paidFriendNotify"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reset-btn" id="resetBtn">🔄 СБРОСИТЬ НАСТРОЙКИ</div>
+        </div>
+    </div>
+
+    <script>
+        const toggleKeys = [
+            'workoutNotify', 'sleepNotify', 'gratitudeNotify', 'tasksNotify',
+            'mealNotify', 'trainingNotify', 'medicationsNotify', 'supplementsNotify',
+            'emotionNotify', 'restNotify', 'relationsNotify', 'businessNotify',
+            'financeNotify', 'rewardNotify', 'activeFriendsNotify', 'paidFriendNotify'
+        ];
+
+        function loadToggleSettings() {
+            const saved = localStorage.getItem('focus_notify_toggles');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                toggleKeys.forEach(key => {
+                    const isActive = settings[key] !== undefined ? settings[key] : true;
+                    const toggle = document.getElementById(key);
+                    if (isActive) toggle.classList.add('active');
+                    else toggle.classList.remove('active');
+                });
+            } else {
+                toggleKeys.forEach(key => {
+                    document.getElementById(key).classList.add('active');
+                });
+            }
+        }
+
+        function saveToggleSettings() {
+            const settings = {};
+            toggleKeys.forEach(key => {
+                const toggle = document.getElementById(key);
+                settings[key] = toggle.classList.contains('active');
+            });
+            localStorage.setItem('focus_notify_toggles', JSON.stringify(settings));
+        }
+
+        toggleKeys.forEach(key => {
+            const toggle = document.getElementById(key);
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('active');
+                saveToggleSettings();
+            });
+        });
+
+        function loadTimeSettings() {
+            const saved = localStorage.getItem('focus_notify_times');
+            if (saved) {
+                const times = JSON.parse(saved);
+                if (times.sleepTime) document.getElementById('sleepTime').value = times.sleepTime;
+                if (times.gratitudeTime) document.getElementById('gratitudeTime').value = times.gratitudeTime;
+            }
+        }
+
+        function saveTimeSettings() {
+            const times = {
+                sleepTime: document.getElementById('sleepTime').value,
+                gratitudeTime: document.getElementById('gratitudeTime').value
+            };
+            localStorage.setItem('focus_notify_times', JSON.stringify(times));
+        }
+
+        document.querySelectorAll('.set-time-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                saveTimeSettings();
+                alert('Время уведомлений сохранено');
+            });
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            toggleKeys.forEach(key => {
+                document.getElementById(key).classList.add('active');
+            });
+            saveToggleSettings();
+            document.getElementById('sleepTime').value = '22:00';
+            document.getElementById('gratitudeTime').value = '21:00';
+            saveTimeSettings();
+            alert('Все настройки уведомлений сброшены к стандартным');
+        });
+
+        loadToggleSettings();
+        loadTimeSettings();
+    </script>
+</body>
+</html>

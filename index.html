@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — Главная</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen {
+            flex: 1;
+            padding: 14px 18px 12px 18px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 4px 12px 4px;
+            font-size: 14px;
+            font-weight: 590;
+            color: #ececef;
+        }
+        .logo-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .logo-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logo-svg { width: 40px; height: 40px; display: block; }
+        .app-name {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* ===== ОРАКУЛ (пирамида с глазом) ===== */
+        .oracle-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 30px;
+            background: rgba(255,215,0,0.08);
+            border: 1.5px solid rgba(255,215,0,0.3);
+            transition: 0.3s ease;
+            animation: glowPulse 2.5s ease-in-out infinite;
+        }
+        .oracle-trigger:active { transform: scale(0.95); }
+        .oracle-trigger:hover {
+            background: rgba(255,215,0,0.15);
+            border-color: #FFD966;
+            box-shadow: 0 0 20px rgba(255,215,0,0.2);
+        }
+        .oracle-icon {
+            width: 28px;
+            height: 28px;
+            display: block;
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 8px rgba(255,215,0,0.2); }
+            50% { box-shadow: 0 0 20px rgba(255,215,0,0.5); }
+        }
+
+        .quote-container {
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            padding: 8px 12px;
+            margin-bottom: 16px;
+        }
+        .quote-text { font-size: 12px; font-weight: 500; color: #FFD966; line-height: 1.3; margin-bottom: 4px; }
+        .quote-author { font-size: 9px; color: #6e6e7e; }
+
+        .focus-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+        .focus-tile {
+            background: rgba(30,30,42,0.5);
+            border-radius: 18px;
+            padding: 10px 14px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .focus-tile:active { transform: scale(0.98); }
+        .tile-icon {
+            font-size: 24px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,215,0,0.08);
+            border-radius: 14px;
+        }
+        .tile-info { flex: 1; }
+        .tile-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+        .tile-subtitle { font-size: 10px; color: #8e8e9e; }
+        .tile-arrow { font-size: 16px; color: #FFD966; opacity: 0.5; }
+
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 6px;
+            background: rgba(18,18,24,0.9);
+            backdrop-filter: blur(20px);
+            border-top: 0.5px solid rgba(255,255,255,0.06);
+            margin-top: 12px;
+            border-radius: 32px;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: #6e6e7e;
+            font-size: 9px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 30px;
+        }
+        .tab-item.active { color: #ffd966; background: rgba(255,217,102,0.1); }
+        .tab-icon { font-size: 18px; }
+        .screen::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="status-bar">
+                <span class="time">9:41</span>
+                <div class="status-icons"><span>📶</span> <span>📶</span> <span>🔋</span></div>
+            </div>
+
+            <!-- Шапка: FOCUS слева, Оракул справа -->
+            <div class="logo-section">
+                <div class="logo-left">
+                    <div class="logo-svg">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g stroke="#FFD966" stroke-width="0.8" stroke-linecap="round" opacity="0.4">
+                                <line x1="50" y1="10" x2="50" y2="20"/>
+                                <line x1="50" y1="80" x2="50" y2="90"/>
+                                <line x1="10" y1="50" x2="20" y2="50"/>
+                                <line x1="80" y1="50" x2="90" y2="50"/>
+                                <line x1="22" y1="22" x2="29" y2="29"/>
+                                <line x1="71" y1="71" x2="78" y2="78"/>
+                                <line x1="22" y1="78" x2="29" y2="71"/>
+                                <line x1="71" y1="29" x2="78" y2="22"/>
+                            </g>
+                            <g fill="#FFD966" opacity="0.7">
+                                <path d="M68 18 L70 23 L75 23 L71 27 L73 32 L68 29 L63 32 L65 27 L61 23 L66 23 Z"/>
+                                <path d="M20 25 L21 28 L24 28 L22 30 L23 33 L20 31 L17 33 L18 30 L16 28 L19 28 Z"/>
+                            </g>
+                            <circle cx="50" cy="50" r="28" stroke="#FFD966" stroke-width="1.2" fill="none" opacity="0.6"/>
+                            <circle cx="50" cy="50" r="22" stroke="#FFD966" stroke-width="0.6" fill="none" opacity="0.3"/>
+                            <path d="M40 48 Q46 43 50 43 Q54 43 60 48 Q54 55 50 55 Q46 55 40 48 Z" fill="#FFD966" fill-opacity="0.15" stroke="#FFD966" stroke-width="1"/>
+                            <circle cx="50" cy="49" r="3.5" fill="#FFD966" fill-opacity="0.5"/>
+                            <circle cx="50" cy="49" r="1.2" fill="#FFFFFF"/>
+                        </svg>
+                    </div>
+                    <div class="app-name">FOCUS</div>
+                </div>
+
+                <!-- Пирамида с глазом (видимая, с золотым кругом) -->
+                <div class="oracle-trigger" id="oracleTrigger">
+                    <div class="oracle-icon">
+                        <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="25,4 4,44 46,44" stroke="#FFD966" stroke-width="1.5" fill="none"/>
+                            <circle cx="25" cy="22" r="5" fill="#FFD966"/>
+                            <circle cx="25" cy="22" r="2" fill="#0a0a0f"/>
+                            <line x1="25" y1="15" x2="25" y2="12" stroke="#FFD966" stroke-width="1.2" opacity="0.6"/>
+                            <line x1="18" y1="19" x2="15" y2="16" stroke="#FFD966" stroke-width="1.2" opacity="0.6"/>
+                            <line x1="32" y1="19" x2="35" y2="16" stroke="#FFD966" stroke-width="1.2" opacity="0.6"/>
+                            <line x1="10" y1="42" x2="40" y2="42" stroke="#FFD966" stroke-width="0.8" opacity="0.3"/>
+                            <line x1="16" y1="36" x2="34" y2="36" stroke="#FFD966" stroke-width="0.8" opacity="0.3"/>
+                            <line x1="20" y1="30" x2="30" y2="30" stroke="#FFD966" stroke-width="0.8" opacity="0.3"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quote-container" id="quoteContainer">
+                <div class="quote-text" id="quoteText">Загрузка...</div>
+                <div class="quote-author" id="quoteAuthor"></div>
+            </div>
+
+            <!-- 6 сфер -->
+            <div class="focus-grid">
+                <div class="focus-tile" onclick="location.href='fokus_body.html'">
+                    <div class="tile-icon">💪</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Физическое тело</div>
+                        <div class="tile-subtitle">Питание · Зарядка · Тренировки</div>
+                    </div>
+                    <div class="tile-arrow">→</div>
+                </div>
+
+                <div class="focus-tile" onclick="location.href='fokus_mental.html'">
+                    <div class="tile-icon">🧠</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Ментальное здоровье</div>
+                        <div class="tile-subtitle">Висяки · Дыхание · Эмоции</div>
+                    </div>
+                    <div class="tile-arrow">→</div>
+                </div>
+
+                <div class="focus-tile" onclick="location.href='fokus_energy.html'">
+                    <div class="tile-icon">⚡</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Энергия</div>
+                        <div class="tile-subtitle">Сон · Отдых · Детокс</div>
+                    </div>
+                    <div class="tile-arrow">→</div>
+                </div>
+
+                <div class="focus-tile" onclick="location.href='fokus_relationships.html'">
+                    <div class="tile-icon">👥</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Отношения</div>
+                        <div class="tile-subtitle">Друзья · Долги · Задачи</div>
+                    </div>
+                    <div class="tile-arrow">→</div>
+                </div>
+
+                <div class="focus-tile" onclick="location.href='fokus_faith.html'">
+                    <div class="tile-icon">🔥</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Вера и ритуалы</div>
+                        <div class="tile-subtitle">Благодарность · Карта желаний</div>
+                    </div>
+                    <div class="tile-arrow">→</div>
+                </div>
+
+                <div class="focus-tile" onclick="location.href='fokus_reward.html'">
+                    <div class="tile-icon">🎁</div>
+                    <div class="tile-info">
+                        <div class="tile-title">Поощрение</div>
+                        <div class="tile-subtitle">Награды · Исключения</div>
+                    </div>
+                    <div class="tile-arrow">→</div>
+                </div>
+            </div>
+
+            <!-- Нижнее меню -->
+            <div class="tab-bar">
+                <div class="tab-item" onclick="location.href='fokus_progress.html'">
+                    <span class="tab-icon">📈</span>
+                    <span>Прогресс</span>
+                </div>
+                <div class="tab-item" onclick="location.href='dashboard.html'">
+                    <span class="tab-icon">🎯</span>
+                    <span>ЛК</span>
+                </div>
+                <div class="tab-item" onclick="location.href='fokus_profile.html'">
+                    <span class="tab-icon">👤</span>
+                    <span>Профиль</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== ЦИТАТЫ =====
+        const quotes = [
+            { text: "Начинай сейчас. Лучший день — сегодня.", author: "Лао-цзы" },
+            { text: "Не жди. Время никогда не будет идеальным.", author: "Наполеон Хилл" },
+            { text: "Ты можешь всё, что захочешь. Просто начни.", author: "Пауло Коэльо" },
+            { text: "Дорогу осилит идущий.", author: "Конфуций" },
+            { text: "Маленький шаг каждый день ведёт к большой цели.", author: "Лао-цзы" }
+        ];
+
+        function showRandomQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            const quote = quotes[randomIndex];
+            document.getElementById('quoteText').innerHTML = quote.text;
+            document.getElementById('quoteAuthor').innerHTML = quote.author;
+        }
+        showRandomQuote();
+
+        // ===== ПЕРЕХОД В МЕНЮ ОРАКУЛА =====
+        document.getElementById('oracleTrigger').addEventListener('click', function(e) {
+            e.stopPropagation();
+            window.location.href = 'oracle_menu.html';
+        });
+
+        // ===== НАСТРОЙКА ВИДИМОСТИ СФЕР =====
+        function loadSphereSettings() {
+            const saved = localStorage.getItem('focus_active_spheres');
+            let active = ['body', 'mental', 'energy', 'relations', 'faith', 'reward'];
+            if (saved) {
+                try {
+                    active = JSON.parse(saved);
+                } catch(e) {}
+            }
+            document.querySelectorAll('.focus-tile[data-sphere]').forEach(tile => {
+                const sphere = tile.dataset.sphere;
+                if (active.includes(sphere)) {
+                    tile.style.display = 'flex';
+                } else {
+                    tile.style.display = 'none';
+                }
+            });
+        }
+
+        loadSphereSettings();
+    </script>
+</body>
+</html>

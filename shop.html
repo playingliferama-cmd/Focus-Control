@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Магазин — FOCUS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            overflow-y: hidden;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .back-btn {
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 30px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .balance-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .balance-label {
+            font-size: 12px;
+            color: #8e8e9e;
+            margin-bottom: 2px;
+        }
+
+        .balance-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #FFD966;
+        }
+
+        .balance-sub {
+            font-size: 10px;
+            color: #8e8e9e;
+            margin-top: 2px;
+        }
+
+        .buy-coins-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .buy-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFD966;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .coin-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .coin-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFD966;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .coin-btn:active {
+            transform: scale(0.95);
+        }
+
+        .coin-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .coin-price {
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #FFD966, #FFAA33);
+            border: none;
+            border-radius: 40px;
+            padding: 8px;
+            color: #0a0a0f;
+            font-weight: 700;
+            font-size: 13px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .buy-btn:active {
+            transform: scale(0.98);
+        }
+
+        .plan-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 0.5px solid rgba(255, 215, 0, 0.15);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .plan-card:active {
+            transform: scale(0.98);
+        }
+
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .plan-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFD966;
+        }
+
+        .plan-price {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .plan-desc {
+            font-size: 11px;
+            color: #8e8e9e;
+            margin-bottom: 6px;
+        }
+
+        .plan-coins {
+            font-size: 10px;
+            color: #FFD966;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1a1a24;
+            border-radius: 28px;
+            width: 300px;
+            padding: 20px;
+            border: 0.5px solid #FFD966;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFD966;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .modal-info {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .info-label {
+            color: #aaa;
+        }
+
+        .info-value {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .total-row {
+            border-top: 0.5px solid rgba(255,255,255,0.1);
+            padding-top: 8px;
+            margin-top: 8px;
+            font-size: 15px;
+        }
+
+        .total-label {
+            color: #FFD966;
+        }
+
+        .total-value {
+            color: #FFD966;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD966, #FFAA33);
+            border: none;
+            border-radius: 40px;
+            padding: 12px;
+            color: #0a0a0f;
+            font-weight: 700;
+            font-size: 15px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 215, 0, 0.08);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 40px;
+            padding: 12px;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .coin-particle {
+            position: fixed;
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle, #FFD966, #FFAA33);
+            border-radius: 50%;
+            box-shadow: 0 0 6px gold;
+            animation: flyToBalance 0.8s ease-out forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes flyToBalance {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-120px) translateX(-60px) scale(0.3); opacity: 0; }
+        }
+
+        .coin-notification {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            border: 1px solid gold;
+            border-radius: 30px;
+            padding: 10px 20px;
+            text-align: center;
+            color: gold;
+            font-weight: bold;
+            z-index: 1001;
+            animation: fadeOut 1.8s forwards;
+            pointer-events: none;
+            font-size: 14px;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -80%) scale(0.8); }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='dashboard.html'">←</div>
+                <div class="title">Магазин</div>
+            </div>
+
+            <div class="balance-card">
+                <div class="balance-label">💰 БАЛАНС</div>
+                <div class="balance-value" id="balanceValue">0</div>
+                <div class="balance-sub">1 F-coin = 1 ₽</div>
+            </div>
+
+            <div class="buy-coins-card">
+                <div class="buy-title">💎 ПОПОЛНИТЬ БАЛАНС</div>
+                <div class="coin-control">
+                    <div class="coin-btn" id="coinMinus">−</div>
+                    <div class="coin-amount" id="coinAmount">100</div>
+                    <div class="coin-btn" id="coinPlus">+</div>
+                </div>
+                <div class="coin-price" id="coinPrice">100 ₽</div>
+                <button class="buy-btn" id="buyCoinsBtn">КУПИТЬ</button>
+            </div>
+
+            <div class="plan-card" data-plan="novice" data-price-coin="333" data-price-rub="333" data-name="Новичок">
+                <div class="plan-header">
+                    <span class="plan-name">🥚 Новичок</span>
+                    <span class="plan-price">333 ₽ / мес</span>
+                </div>
+                <div class="plan-desc">Базовый доступ ко всем сферам</div>
+                <div class="plan-coins">или 333 F-coins</div>
+            </div>
+
+            <div class="plan-card" data-plan="fighter" data-price-coin="555" data-price-rub="555" data-name="Боец">
+                <div class="plan-header">
+                    <span class="plan-name">⚔️ Боец</span>
+                    <span class="plan-price">555 ₽ / мес</span>
+                </div>
+                <div class="plan-desc">Друзья, команды, челленджи</div>
+                <div class="plan-coins">или 555 F-coins</div>
+            </div>
+
+            <div class="plan-card" data-plan="elite" data-price-coin="777" data-price-rub="777" data-name="Элита">
+                <div class="plan-header">
+                    <span class="plan-name">🏆 Элита</span>
+                    <span class="plan-price">777 ₽ / мес</span>
+                </div>
+                <div class="plan-desc">Всё + семейный код, приоритет</div>
+                <div class="plan-coins">или 777 F-coins</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="purchaseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-info">
+                <div class="info-row">
+                    <span class="info-label">💰 Ваш баланс:</span>
+                    <span class="info-value" id="modalBalance">0 F-coins</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📉 Нужно:</span>
+                    <span class="info-value" id="modalNeeded">0 F-coins</span>
+                </div>
+                <div class="info-row" id="shortageRow" style="display:none;">
+                    <span class="info-label">⚡ Не хватает:</span>
+                    <span class="info-value" id="modalShortage">0 F-coins</span>
+                </div>
+                <div class="info-row total-row" id="totalRow" style="display:none;">
+                    <span class="info-label total-label">💰 ИТОГО К ОПЛАТЕ:</span>
+                    <span class="info-value total-value" id="modalTotal">0 ₽</span>
+                </div>
+            </div>
+            <button class="btn-primary" id="confirmBtn">💳 ОПЛАТИТЬ</button>
+            <button class="btn-secondary" id="cancelBtn">🔙 ОТМЕНА</button>
+        </div>
+    </div>
+
+    <script>
+        function playCoinSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = 880;
+                gainNode.gain.value = 0.15;
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            } catch(e) {}
+        }
+
+        function showCoinAnimation(amount, reason) {
+            const notification = document.createElement('div');
+            notification.className = 'coin-notification';
+            notification.innerHTML = `+${amount} F-coins<br><span style="font-size:10px;">${reason}</span>`;
+            document.body.appendChild(notification);
+            for (let i = 0; i < 10; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'coin-particle';
+                coin.style.left = Math.random() * window.innerWidth + 'px';
+                coin.style.top = window.innerHeight / 2 + (Math.random() - 0.5) * 100 + 'px';
+                coin.style.animationDelay = Math.random() * 0.3 + 's';
+                document.body.appendChild(coin);
+                setTimeout(() => coin.remove(), 800);
+            }
+            playCoinSound();
+            setTimeout(() => notification.remove(), 1800);
+        }
+
+        let userCoins = parseInt(localStorage.getItem('focus_coins')) || 125;
+        document.getElementById('balanceValue').innerText = userCoins + ' F-coins';
+
+        let selectedPlan = null;
+
+        function updateBalanceUI() {
+            document.getElementById('balanceValue').innerText = userCoins + ' F-coins';
+            localStorage.setItem('focus_coins', userCoins);
+        }
+
+        let coinAmount = 100;
+        document.getElementById('coinAmount').innerText = coinAmount;
+        document.getElementById('coinPrice').innerText = coinAmount + ' ₽';
+
+        document.getElementById('coinPlus').addEventListener('click', () => {
+            coinAmount += 100;
+            document.getElementById('coinAmount').innerText = coinAmount;
+            document.getElementById('coinPrice').innerText = coinAmount + ' ₽';
+        });
+
+        document.getElementById('coinMinus').addEventListener('click', () => {
+            if (coinAmount > 100) {
+                coinAmount -= 100;
+                document.getElementById('coinAmount').innerText = coinAmount;
+                document.getElementById('coinPrice').innerText = coinAmount + ' ₽';
+            }
+        });
+
+        document.getElementById('buyCoinsBtn').addEventListener('click', () => {
+            alert(`💳 Покупка ${coinAmount} F-coins за ${coinAmount} ₽ (симуляция).`);
+            userCoins += coinAmount;
+            updateBalanceUI();
+            showCoinAnimation(coinAmount, 'Пополнение баланса');
+        });
+
+        document.querySelectorAll('.plan-card').forEach(card => {
+            card.addEventListener('click', () => {
+                selectedPlan = {
+                    name: card.dataset.name,
+                    priceCoin: parseInt(card.dataset.priceCoin),
+                    priceRub: parseInt(card.dataset.priceRub)
+                };
+                showPurchaseModal();
+            });
+        });
+
+        function showPurchaseModal() {
+            const modal = document.getElementById('purchaseModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBalance = document.getElementById('modalBalance');
+            const modalNeeded = document.getElementById('modalNeeded');
+            const shortageRow = document.getElementById('shortageRow');
+            const modalShortage = document.getElementById('modalShortage');
+            const totalRow = document.getElementById('totalRow');
+            const modalTotal = document.getElementById('modalTotal');
+            const confirmBtn = document.getElementById('confirmBtn');
+
+            modalTitle.innerText = `Купить «${selectedPlan.name}» (${selectedPlan.priceRub} ₽ / мес)`;
+            modalBalance.innerText = userCoins + ' F-coins';
+            modalNeeded.innerText = selectedPlan.priceCoin + ' F-coins';
+
+            if (userCoins >= selectedPlan.priceCoin) {
+                shortageRow.style.display = 'none';
+                totalRow.style.display = 'none';
+                confirmBtn.innerText = '✅ КУПИТЬ ЗА F-COINS';
+            } else {
+                const shortage = selectedPlan.priceCoin - userCoins;
+                shortageRow.style.display = 'flex';
+                modalShortage.innerText = shortage + ' F-coins';
+                totalRow.style.display = 'flex';
+                modalTotal.innerText = shortage + ' ₽';
+                confirmBtn.innerText = '💳 ДОПЛАТИТЬ ' + shortage + ' ₽';
+            }
+            modal.style.display = 'flex';
+        }
+
+        document.getElementById('confirmBtn').addEventListener('click', () => {
+            if (userCoins >= selectedPlan.priceCoin) {
+                userCoins -= selectedPlan.priceCoin;
+                updateBalanceUI();
+                showCoinAnimation(selectedPlan.priceCoin, `За подписку «${selectedPlan.name}»`);
+                alert(`🎉 Подписка «${selectedPlan.name}» активирована!\nСписано ${selectedPlan.priceCoin} F-coins.`);
+                document.getElementById('purchaseModal').style.display = 'none';
+                localStorage.setItem('focus_subscription', selectedPlan.name);
+                localStorage.setItem('focus_subscription_until', new Date(Date.now() + 30*24*60*60*1000).toISOString());
+            } else {
+                const shortage = selectedPlan.priceCoin - userCoins;
+                alert(`💳 Доплата ${shortage} ₽.\nСписано ${userCoins} F-coins.\nСписано ${shortage} ₽ (симуляция).\nПодписка «${selectedPlan.name}» активирована!`);
+                userCoins = 0;
+                updateBalanceUI();
+                document.getElementById('purchaseModal').style.display = 'none';
+                localStorage.setItem('focus_subscription', selectedPlan.name);
+                localStorage.setItem('focus_subscription_until', new Date(Date.now() + 30*24*60*60*1000).toISOString());
+            }
+        });
+
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            document.getElementById('purchaseModal').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

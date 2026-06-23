@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — управляй своей жизнью</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 20px 20px 16px 20px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .screen::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Логотип */
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 6px;
+        }
+
+        .logo-text {
+            font-size: 30px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-sub {
+            font-size: 13px;
+            color: #8e8e9e;
+            margin-top: 3px;
+        }
+
+        /* Секция иконок сфер */
+        .spheres {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .spheres-title {
+            font-size: 15px;
+            color: #FFD966;
+            margin-bottom: 12px;
+        }
+
+        .spheres-icons {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .sphere-item {
+            flex: 1;
+            text-align: center;
+            min-width: 45px;
+        }
+
+        .sphere-icon {
+            font-size: 26px;
+            margin-bottom: 3px;
+        }
+
+        .sphere-name {
+            font-size: 9px;
+            color: #aaa;
+        }
+
+        /* Преимущества */
+        .benefits {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .benefit-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .benefit-icon {
+            font-size: 26px;
+            width: 44px;
+            text-align: center;
+        }
+
+        .benefit-text {
+            flex: 1;
+        }
+
+        .benefit-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .benefit-desc {
+            font-size: 11px;
+            color: #8e8e9e;
+        }
+
+        /* Кнопки */
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD966, #FFAA33);
+            border: none;
+            border-radius: 40px;
+            padding: 12px;
+            color: #0a0a0f;
+            font-weight: 700;
+            font-size: 15px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 215, 0, 0.08);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 40px;
+            padding: 12px;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 15px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Футер */
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #6e6e7e;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <!-- Логотип -->
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g stroke="#FFD966" stroke-width="0.8" stroke-linecap="round" opacity="0.4">
+                            <line x1="50" y1="10" x2="50" y2="20" />
+                            <line x1="50" y1="80" x2="50" y2="90" />
+                            <line x1="10" y1="50" x2="20" y2="50" />
+                            <line x1="80" y1="50" x2="90" y2="50" />
+                            <line x1="22" y1="22" x2="29" y2="29" />
+                            <line x1="71" y1="71" x2="78" y2="78" />
+                            <line x1="22" y1="78" x2="29" y2="71" />
+                            <line x1="71" y1="29" x2="78" y2="22" />
+                        </g>
+                        <circle cx="50" cy="50" r="28" stroke="#FFD966" stroke-width="1.2" fill="none" opacity="0.6"/>
+                        <circle cx="50" cy="50" r="22" stroke="#FFD966" stroke-width="0.6" fill="none" opacity="0.3"/>
+                        <path d="M40 48 Q46 43 50 43 Q54 43 60 48 Q54 55 50 55 Q46 55 40 48 Z" fill="#FFD966" fill-opacity="0.15" stroke="#FFD966" stroke-width="1"/>
+                        <circle cx="50" cy="49" r="3.5" fill="#FFD966" fill-opacity="0.5"/>
+                        <circle cx="50" cy="49" r="1.2" fill="#FFFFFF"/>
+                    </svg>
+                </div>
+                <div class="logo-text">FOCUS</div>
+                <div class="logo-sub">управляй своей жизнью</div>
+            </div>
+
+            <!-- 6 сфер -->
+            <div class="spheres">
+                <div class="spheres-title">6 сфер твоей жизни</div>
+                <div class="spheres-icons">
+                    <div class="sphere-item"><div class="sphere-icon">💪</div><div class="sphere-name">Тело</div></div>
+                    <div class="sphere-item"><div class="sphere-icon">🧠</div><div class="sphere-name">Менталка</div></div>
+                    <div class="sphere-item"><div class="sphere-icon">👥</div><div class="sphere-name">Отношения</div></div>
+                    <div class="sphere-item"><div class="sphere-icon">🔥</div><div class="sphere-name">Вера</div></div>
+                    <div class="sphere-item"><div class="sphere-icon">🎁</div><div class="sphere-name">Награды</div></div>
+                    <div class="sphere-item"><div class="sphere-icon">⚡</div><div class="sphere-name">Энергия</div></div>
+                </div>
+            </div>
+
+            <!-- Преимущества -->
+            <div class="benefits">
+                <div class="benefit-item">
+                    <div class="benefit-icon">💰</div>
+                    <div class="benefit-text">
+                        <div class="benefit-title">Зарабатывай монеты</div>
+                        <div class="benefit-desc">За реальные дела и приглашения друзей</div>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">🤝</div>
+                    <div class="benefit-text">
+                        <div class="benefit-title">Приглашай друзей</div>
+                        <div class="benefit-desc">Получай бонусы за каждого активного друга</div>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">🆓</div>
+                    <div class="benefit-text">
+                        <div class="benefit-title">Пользуйся бесплатно</div>
+                        <div class="benefit-desc">Выполняй условия — не плати ни копейки</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="buttons">
+                <a href="register.html" class="btn-primary">🚀 РЕГИСТРАЦИЯ</a>
+                <a href="login.html" class="btn-secondary">🔐 ВОЙТИ</a>
+            </div>
+
+            <!-- Футер -->
+            <div class="footer">
+                FOCUS — твой путь к осознанной жизни
+            </div>
+        </div>
+    </div>
+</body>
+</html>

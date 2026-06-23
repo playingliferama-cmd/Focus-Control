@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — Астрология</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen {
+            flex: 1;
+            padding: 12px 16px 10px 16px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+            scrollbar-width: none;
+        }
+        .screen::-webkit-scrollbar { display: none; }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .back-btn {
+            font-size: 22px; cursor: pointer; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,215,0,0.08); border-radius: 30px;
+        }
+        .title {
+            font-size: 20px; font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .scroll-area::-webkit-scrollbar { display: none; }
+
+        .zodiac-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        .zodiac-btn {
+            background: rgba(30,30,42,0.5);
+            border: 0.5px solid rgba(255,215,0,0.1);
+            border-radius: 10px;
+            padding: 6px 2px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-size: 18px;
+            color: #8e8e9e;
+        }
+        .zodiac-btn .sign-label { font-size: 9px; display: block; margin-top: 2px; }
+        .zodiac-btn.active {
+            border-color: #FFD966;
+            background: rgba(255,215,0,0.1);
+            color: #FFD966;
+        }
+        .zodiac-btn:active { transform: scale(0.96); }
+
+        .card {
+            background: rgba(30,30,42,0.5);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+        }
+        .card-title { font-size: 14px; font-weight: 600; color: #FFD966; margin-bottom: 6px; }
+        .card-text { font-size: 13px; color: #fff; line-height: 1.6; margin-bottom: 8px; }
+        .rating-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+        .rating-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #aaa; }
+        .rating-item .label { font-size: 10px; }
+        .stars { display: flex; gap: 0px; }
+        .stars .star { font-size: 12px; line-height: 1; color: #333; }
+        .stars .star.filled { color: #FFD966; }
+
+        .btn-row { display: flex; gap: 6px; margin-top: 8px; }
+        .btn-sm {
+            flex: 1;
+            background: rgba(255,215,0,0.08);
+            border: 0.5px solid rgba(255,215,0,0.2);
+            border-radius: 30px;
+            padding: 6px;
+            text-align: center;
+            color: #FFD966;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .btn-sm:active { transform: scale(0.97); }
+        .btn-sm.paid { background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.4); }
+
+        .compat-input {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 0.5px solid rgba(255,215,0,0.2);
+            border-radius: 20px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            margin-top: 6px;
+        }
+        .compat-input::placeholder { color: #6e6e7e; }
+        .compat-result {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            border-left: 2px solid #FFD966;
+        }
+        .compat-result .pct { font-size: 20px; font-weight: 700; color: #FFD966; }
+        .compat-result .desc { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1a1a24;
+            border-radius: 24px;
+            width: 340px;
+            padding: 20px;
+            border: 0.5px solid rgba(255,215,0,0.2);
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        .modal-title { font-size: 18px; font-weight: 600; color: #FFD966; text-align: center; margin-bottom: 12px; }
+        .history-item { padding: 8px 0; border-bottom: 0.5px solid rgba(255,255,255,0.05); }
+        .history-item .date { font-size: 11px; color: #8e8e9e; }
+        .history-item .text { font-size: 11px; color: #fff; margin: 2px 0; }
+        .history-item .stars-small { font-size: 10px; color: #FFD966; }
+        .modal-btn {
+            text-align: center;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.06);
+            color: #aaa;
+            margin-top: 12px;
+        }
+        .modal-btn:hover { background: rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='index.html'">←</div>
+                <div class="title">🌟 Астрология</div>
+            </div>
+
+            <div class="scroll-area">
+                <div class="zodiac-grid" id="zodiacGrid"></div>
+
+                <div class="card" id="horoscopeCard">
+                    <div class="card-title" id="horoscopeTitle">♈ Овен</div>
+                    <div class="card-text" id="horoscopeText">Выберите свой знак зодиака, чтобы увидеть гороскоп на сегодня.</div>
+                    <div class="rating-row" id="ratingRow"></div>
+                    <div class="btn-row">
+                        <div class="btn-sm" id="archiveBtn">📋 Архив</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">🔮 Совместимость</div>
+                    <div style="font-size: 11px; color: #aaa; margin-bottom: 4px;">Введите дату рождения партнёра</div>
+                    <input type="date" class="compat-input" id="compatDate">
+                    <div class="btn-row">
+                        <div class="btn-sm paid" id="compatBtn">💳 Узнать (100 F-coins)</div>
+                    </div>
+                    <div class="compat-result" id="compatResult" style="display: none;">
+                        <div class="pct" id="compatPct">75%</div>
+                        <div class="desc" id="compatDesc">Вы отлично дополняете друг друга!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="archiveModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">📋 Архив гороскопов</div>
+            <div id="archiveList"></div>
+            <div class="modal-btn" id="closeArchiveBtn">Закрыть</div>
+        </div>
+    </div>
+
+    <script>
+        const zodiacSigns = [
+            { id: 'aries', name: '♈', label: 'Овен', element: 'fire' },
+            { id: 'taurus', name: '♉', label: 'Телец', element: 'earth' },
+            { id: 'gemini', name: '♊', label: 'Близнецы', element: 'air' },
+            { id: 'cancer', name: '♋', label: 'Рак', element: 'water' },
+            { id: 'leo', name: '♌', label: 'Лев', element: 'fire' },
+            { id: 'virgo', name: '♍', label: 'Дева', element: 'earth' },
+            { id: 'libra', name: '♎', label: 'Весы', element: 'air' },
+            { id: 'scorpio', name: '♏', label: 'Скорпион', element: 'water' },
+            { id: 'sagittarius', name: '♐', label: 'Стрелец', element: 'fire' },
+            { id: 'capricorn', name: '♑', label: 'Козерог', element: 'earth' },
+            { id: 'aquarius', name: '♒', label: 'Водолей', element: 'air' },
+            { id: 'pisces', name: '♓', label: 'Рыбы', element: 'water' }
+        ];
+
+        // ===== ВСЕ 12 ЗНАКОВ — ПО 6 ПРЕДЛОЖЕНИЙ =====
+        const dailyHoroscopes = {
+            aries: {
+                text: 'Сегодня Овнам звёзды обещают всплеск энергии и энтузиазма. У вас появится желание браться за новые проекты и покорять вершины. Ваша уверенность в себе привлечёт внимание окружающих, будьте готовы к интересным предложениям. Однако не забывайте о мелочах — они могут оказаться важнее, чем кажется. Вечером уделите время отдыху и восстановлению сил, чтобы сохранить баланс. День благоприятен для активных действий и принятия важных решений в личной и деловой сфере.',
+                ratings: { love: 3, work: 5, finance: 4, health: 4 }
+            },
+            taurus: {
+                text: 'Для Тельцов сегодняшний день будет спокойным и гармоничным. Звёзды советуют сосредоточиться на комфорте и уюте в своем доме и окружении. Это отличное время для того, чтобы завершить старые дела и навести порядок в финансах и документах. Ваша настойчивость и терпение будут вознаграждены, возможно, в самом неожиданном месте. Возможны приятные сюрпризы от близких людей, которые давно не давали о себе знать. Не торопитесь с важными решениями — дайте себе время подумать и взвесить все за и против, чтобы избежать ошибок.',
+                ratings: { love: 4, work: 4, finance: 5, health: 3 }
+            },
+            gemini: {
+                text: 'Близнецов сегодня ждёт день общения и новых знакомств с интересными людьми. Ваша коммуникабельность и остроумие помогут завязать полезные контакты, которые могут пригодиться в будущем. Не бойтесь высказывать свои идеи — они будут услышаны и оценены по достоинству коллегами и друзьями. Однако старайтесь избегать поверхностных разговоров, ищите глубину в каждом взаимодействии и учитесь слушать собеседника. Вечером стоит провести время с близкими, восстанавливая эмоциональный баланс и укрепляя семейные связи. Возможно получение важной информации по электронной почте или в мессенджере, которая изменит ваши планы.',
+                ratings: { love: 4, work: 5, finance: 3, health: 4 }
+            },
+            cancer: {
+                text: 'Ракам сегодня стоит прислушаться к своей интуиции, которая обострится до предела. Звёзды предупреждают, что эмоции могут взять верх над разумом, но если вы позволите себе чувствовать, это принесёт ясность в сложных вопросах и поможет принять правильное решение. Благоприятное время для укрепления семейных связей и домашнего уюта, проведите время с близкими за чашкой чая. Финансовые вопросы лучше отложить до более ясного периода, чтобы избежать ненужных потерь и ошибок. Забота о себе и своём внутреннем мире станет ключом к гармоничному дню, уделите время медитации или прогулке на свежем воздухе. Вечером займитесь тем, что приносит вам радость и умиротворение, чтобы восстановить душевное равновесие.',
+                ratings: { love: 5, work: 3, finance: 3, health: 4 }
+            },
+            leo: {
+                text: 'Львы сегодня будут в центре внимания, и это ваш звездный час. Звёзды благосклонны к вашей харизме и лидерским качествам, так что не стесняйтесь проявлять себя. Это идеальный день, чтобы заявить о себе и продвинуть свои идеи на работе или в творческом проекте. Дела на работе будут спориться, особенно если вы действуете решительно и уверенно, не боясь брать на себя ответственность. В личной жизни возможен романтический поворот событий, который принесёт много ярких эмоций. Не забывайте благодарить окружающих за их поддержку — ваша щедрость и внимание будут оценены по достоинству. Сегодня вы можете вдохновить других своим примером и стать для них настоящим лидером.',
+                ratings: { love: 4, work: 5, finance: 4, health: 5 }
+            },
+            virgo: {
+                text: 'Девам сегодня предстоит сосредоточиться на деталях и глубоком анализе текущих событий. Ваше внимание к мелочам поможет обнаружить то, что ускользает от других, и избежать серьёзных ошибок. Это удачный день для завершения текущих проектов и подведения итогов за прошедший период. Финансовые решения, принятые сегодня, окажутся дальновидными и принесут плоды в будущем. Постарайтесь не перегружать себя работой, найдите время для отдыха и рефлексии, чтобы привести мысли в порядок. Вечером уделите время хобби или занятиям, которые помогают вам расслабиться и восстановить душевное равновесие после напряжённого дня.',
+                ratings: { love: 3, work: 5, finance: 4, health: 3 }
+            },
+            libra: {
+                text: 'Весам сегодня звёзды сулят день гармонии и равновесия во всех сферах жизни. Ваша способность находить компромиссы поможет урегулировать любые конфликты и споры, которые могут возникнуть. Отличное время для взаимодействия с партнёрами и коллегами, совместные проекты принесут хорошие результаты. Однако не забывайте о собственных желаниях и потребностях — не стоит жертвовать ими ради других людей. Вечером балуйте себя приятными мелочами, восстановите душевное равновесие с помощью любимого занятия или приятного общения. Возможно получение неожиданного подарка или приятного известия от старых друзей, которое поднимет вам настроение.',
+                ratings: { love: 5, work: 4, finance: 3, health: 4 }
+            },
+            scorpio: {
+                text: 'Скорпионов сегодня ожидает глубокая внутренняя работа и переосмысление жизненных ценностей. Звёзды призывают вас к трансформации и пересмотру старых убеждений, которые мешают вам двигаться вперёд. Возможно, вы почувствуете желание изменить что-то в своей жизни — от отношений до карьерного пути, и это правильный момент. Это время для смелых решений, но важно действовать без резкости, обдумывая каждый шаг и избегая импульсивных поступков. Прислушивайтесь к своим инстинктам, они вас не подведут и помогут найти правильный путь. Вечером проведите время в одиночестве, чтобы переварить все впечатления и принять важные решения для своего будущего.',
+                ratings: { love: 4, work: 4, finance: 3, health: 5 }
+            },
+            sagittarius: {
+                text: 'Стрельцам сегодня звёзды сулят приключения и жажду новых знаний, которые откроют перед вами новые горизонты. Это отличный день для обучения, путешествий или расширения кругозора в любой интересующей вас сфере. Ваша оптимистичная энергия притягивает людей, будьте центром притяжения новых возможностей и интересных знакомств. В финансовых вопросах возможно неожиданное поступление средств или выгодное предложение, которое стоит рассмотреть. Однако помните, что даже в приключениях нужен план — не забывайте о практических деталях и не рискуйте понапрасну. Вечером поделитесь своими открытиями с близкими — ваши идеи могут вдохновить и их на собственные свершения.',
+                ratings: { love: 4, work: 4, finance: 5, health: 4 }
+            },
+            capricorn: {
+                text: 'Козерогам сегодня предстоит столкнуться с вопросами стабильности и структуры в своей жизни. Звёзды советуют сосредоточиться на долгосрочных планах и финансовой дисциплине, чтобы заложить прочный фундамент для будущего. Ваш прагматичный подход поможет избежать ненужных рисков и ошибок, которые могли бы дорого обойтись. Это благоприятное время для карьерных шагов и серьёзных обсуждений с руководством или партнёрами. В отношениях стоит проявить больше тепла и участия — это укрепит ваши связи и добавит гармонии в личную жизнь. Вечером уделите время семье и домашним делам, это поможет вам чувствовать себя более устойчиво и уверенно в завтрашнем дне.',
+                ratings: { love: 3, work: 5, finance: 5, health: 3 }
+            },
+            aquarius: {
+                text: 'Водолеям звёзды сулят день инноваций и оригинальных идей, которые могут перевернуть ваше представление о мире. Ваш творческий потенциал сегодня на пике, не бойтесь предлагать нестандартные решения и выходить за рамки привычного. Это отличное время для работы с информацией и общения с единомышленниками, которые разделяют ваши взгляды и интересы. Однако старайтесь не распылять энергию на множество дел — выберите одно направление и идите к цели, чтобы добиться максимального результата. Вечером устройте цифровой детокс и дайте себе возможность просто побыть в тишине, отдохнуть от информационного шума. Это поможет вам восстановить силы и обрести новые идеи для будущих проектов и свершений.',
+                ratings: { love: 4, work: 5, finance: 3, health: 4 }
+            },
+            pisces: {
+                text: 'Рыбам сегодня стоит полностью довериться своей интуиции, которая будет вести вас в нужном направлении. Звёзды открывают для вас поток творческой энергии и вдохновения, который поможет реализовать самые смелые замыслы и мечты. Возможно, вы почувствуете необходимость уединиться и поразмышлять — не игнорируйте это желание, оно поможет вам найти ответы на важные вопросы. Финансовые вопросы лучше решать через партнёрство и совместные проекты, это принесёт больше выгоды и надёжности. В личной жизни ожидайте приятных и романтических моментов, которые наполнят вас теплом и радостью, укрепляя ваши отношения с близкими. Вечером займитесь творчеством — это поможет вам выразить свои эмоции и найти гармонию в себе, восстановить душевное равновесие.',
+                ratings: { love: 5, work: 3, finance: 3, health: 4 }
+            }
+        };
+
+        const compatibilityTexts = {
+            'fire-fire': 'Вас ждёт яркое и страстное партнёрство. Энергия бьёт ключом!',
+            'fire-air': 'Вы отлично дополняете друг друга. Огонь даёт энергию, воздух — идеи.',
+            'fire-earth': 'Сложный союз. Огонь стремится вверх, земля тянет вниз. Нужны компромиссы.',
+            'fire-water': 'Напряжённый союз. Эмоции зашкаливают. Учитесь понимать друг друга.',
+            'earth-earth': 'Стабильность и надёжность. Вы построите крепкий союз.',
+            'earth-water': 'Гармоничное сочетание. Вода питает землю, земля даёт форму воде.',
+            'earth-air': 'Воздух слишком лёгок для земли, земля слишком тяжела для воздуха.',
+            'air-air': 'Интеллектуальное партнёрство. Вам никогда не будет скучно вместе.',
+            'air-water': 'Вода даёт глубину воздуху, воздух даёт лёгкость воде. Хороший баланс.',
+            'water-water': 'Очень эмоциональный союз. Вы понимаете друг друга без слов.',
+            'water-fire': 'Сложно, но интересно. Огонь испаряет воду, вода тушит огонь.'
+        };
+
+        let currentSign = null;
+        let viewCount = 0;
+        let horoscopeHistory = [];
+
+        function getToday() { return new Date().toISOString().slice(0, 10); }
+
+        function init() {
+            const savedSign = localStorage.getItem('focus_zodiac_sign');
+            const savedViewCount = localStorage.getItem('focus_astrology_views');
+            const savedHistory = localStorage.getItem('focus_astrology_history');
+
+            if (savedViewCount) viewCount = parseInt(savedViewCount) || 0;
+            if (savedHistory) horoscopeHistory = JSON.parse(savedHistory);
+
+            renderZodiacGrid();
+            if (savedSign && zodiacSigns.find(z => z.id === savedSign)) {
+                currentSign = savedSign;
+                showHoroscope(savedSign);
+            } else {
+                document.getElementById('horoscopeTitle').innerHTML = '♈ Овен';
+                document.getElementById('horoscopeText').innerHTML = 'Выберите свой знак зодиака, чтобы увидеть гороскоп на сегодня.';
+                document.getElementById('ratingRow').innerHTML = '';
+            }
+        }
+
+        function renderZodiacGrid() {
+            const grid = document.getElementById('zodiacGrid');
+            grid.innerHTML = '';
+            zodiacSigns.forEach(z => {
+                const btn = document.createElement('div');
+                btn.className = 'zodiac-btn' + (currentSign === z.id ? ' active' : '');
+                btn.innerHTML = `${z.name}<span class="sign-label">${z.label}</span>`;
+                btn.dataset.id = z.id;
+                btn.addEventListener('click', () => {
+                    currentSign = z.id;
+                    localStorage.setItem('focus_zodiac_sign', z.id);
+                    renderZodiacGrid();
+                    showHoroscope(z.id);
+                });
+                grid.appendChild(btn);
+            });
+        }
+
+        function showHoroscope(signId) {
+            const sign = zodiacSigns.find(z => z.id === signId);
+            if (!sign) return;
+
+            const today = getToday();
+            const isFree = viewCount < 3;
+
+            const todayEntry = horoscopeHistory.find(h => h.date === today && h.sign === signId);
+            if (todayEntry) {
+                displayHoroscope(sign, todayEntry);
+                return;
+            }
+
+            if (!isFree) {
+                const coins = parseInt(localStorage.getItem('focus_coins')) || 0;
+                if (coins < 15) {
+                    document.getElementById('horoscopeTitle').innerHTML = `${sign.name} ${sign.label}`;
+                    document.getElementById('horoscopeText').innerHTML = 'Недостаточно F-coins (нужно 15). Пополните баланс в магазине.';
+                    document.getElementById('ratingRow').innerHTML = '';
+                    return;
+                }
+                localStorage.setItem('focus_coins', coins - 15);
+                viewCount++;
+                localStorage.setItem('focus_astrology_views', viewCount);
+            } else {
+                viewCount++;
+                localStorage.setItem('focus_astrology_views', viewCount);
+            }
+
+            const horoscope = dailyHoroscopes[signId];
+            if (!horoscope) return;
+
+            const entry = {
+                date: today,
+                sign: signId,
+                text: horoscope.text,
+                ratings: horoscope.ratings
+            };
+
+            horoscopeHistory = horoscopeHistory.filter(h => !(h.date === today && h.sign === signId));
+            horoscopeHistory.push(entry);
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            horoscopeHistory = horoscopeHistory.filter(h => new Date(h.date) >= sevenDaysAgo);
+            localStorage.setItem('focus_astrology_history', JSON.stringify(horoscopeHistory));
+
+            displayHoroscope(sign, entry);
+        }
+
+        function displayHoroscope(sign, entry) {
+            document.getElementById('horoscopeTitle').innerHTML = `${sign.name} ${sign.label}`;
+            document.getElementById('horoscopeText').innerHTML = entry.text;
+            const ratings = entry.ratings;
+            const labels = { love: '💖', work: '💼', finance: '💰', health: '🧠' };
+            const names = { love: 'Любовь', work: 'Работа', finance: 'Финансы', health: 'Здоровье' };
+            let html = '';
+            for (let key in ratings) {
+                const val = ratings[key];
+                html += `
+                    <div class="rating-item">
+                        <span class="label">${labels[key]} ${names[key]}:</span>
+                        <span class="stars">
+                            ${Array.from({ length: 5 }, (_, i) => {
+                                if (i < val) {
+                                    return `<span class="star filled" style="font-size: 12px; line-height: 1;">⭐</span>`;
+                                } else {
+                                    return `<span class="star" style="font-size: 12px; line-height: 1; color: #333;">☆</span>`;
+                                }
+                            }).join('')}
+                        </span>
+                    </div>
+                `;
+            }
+            document.getElementById('ratingRow').innerHTML = html;
+        }
+
+        document.getElementById('archiveBtn').addEventListener('click', () => {
+            const list = document.getElementById('archiveList');
+            list.innerHTML = '';
+            if (horoscopeHistory.length === 0) {
+                list.innerHTML = '<div style="text-align:center;color:#6e6e7e;padding:20px;">Нет сохранённых гороскопов</div>';
+            } else {
+                horoscopeHistory.slice().reverse().forEach(h => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    const sign = zodiacSigns.find(z => z.id === h.sign);
+                    const avg = Math.floor((h.ratings.love + h.ratings.work + h.ratings.finance + h.ratings.health) / 4);
+                    const starStr = '⭐'.repeat(Math.min(avg, 5));
+                    div.innerHTML = `
+                        <div class="date">📅 ${h.date} ${sign ? sign.name : ''}</div>
+                        <div class="text">${h.text.substring(0, 60)}${h.text.length > 60 ? '...' : ''}</div>
+                        <div class="stars-small">${starStr}</div>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+            document.getElementById('archiveModal').style.display = 'flex';
+        });
+
+        document.getElementById('closeArchiveBtn').addEventListener('click', () => {
+            document.getElementById('archiveModal').style.display = 'none';
+        });
+        document.getElementById('archiveModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) document.getElementById('archiveModal').style.display = 'none';
+        });
+
+        document.getElementById('compatBtn').addEventListener('click', function() {
+            const date = document.getElementById('compatDate').value;
+            if (!date) { alert('Введите дату рождения партнёра'); return; }
+
+            const coins = parseInt(localStorage.getItem('focus_coins')) || 0;
+            if (coins < 100) { alert('Недостаточно F-coins (нужно 100). Пополните баланс в магазине.'); return; }
+            localStorage.setItem('focus_coins', coins - 100);
+
+            const sign1 = zodiacSigns.find(z => z.id === currentSign);
+            if (!sign1) { alert('Сначала выберите свой знак зодиака'); return; }
+
+            const sign2 = getZodiacByDate(new Date(date));
+            if (!sign2) { alert('Не удалось определить знак партнёра'); return; }
+
+            const compat = getCompatibility(sign1, sign2);
+            document.getElementById('compatResult').style.display = 'block';
+            document.getElementById('compatPct').innerHTML = compat.percentage + '%';
+            document.getElementById('compatDesc').innerHTML = compat.text;
+        });
+
+        function getZodiacByDate(date) {
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return zodiacSigns.find(z => z.id === 'aries');
+            if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return zodiacSigns.find(z => z.id === 'taurus');
+            if ((month === 5 && day >= 21) || (month === 6 && day <= 21)) return zodiacSigns.find(z => z.id === 'gemini');
+            if ((month === 6 && day >= 22) || (month === 7 && day <= 22)) return zodiacSigns.find(z => z.id === 'cancer');
+            if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return zodiacSigns.find(z => z.id === 'leo');
+            if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return zodiacSigns.find(z => z.id === 'virgo');
+            if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return zodiacSigns.find(z => z.id === 'libra');
+            if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return zodiacSigns.find(z => z.id === 'scorpio');
+            if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return zodiacSigns.find(z => z.id === 'sagittarius');
+            if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return zodiacSigns.find(z => z.id === 'capricorn');
+            if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return zodiacSigns.find(z => z.id === 'aquarius');
+            if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return zodiacSigns.find(z => z.id === 'pisces');
+            return null;
+        }
+
+        function getCompatibility(sign1, sign2) {
+            const key = `${sign1.element}-${sign2.element}`;
+            const keyRev = `${sign2.element}-${sign1.element}`;
+            let text = compatibilityTexts[key] || compatibilityTexts[keyRev] || 'У вас интересное сочетание!';
+            let base = 50;
+            if (sign1.element === sign2.element) base = 85;
+            else if ((sign1.element === 'fire' && sign2.element === 'air') || (sign1.element === 'air' && sign2.element === 'fire')) base = 75;
+            else if ((sign1.element === 'earth' && sign2.element === 'water') || (sign1.element === 'water' && sign2.element === 'earth')) base = 80;
+            else if ((sign1.element === 'fire' && sign2.element === 'earth') || (sign1.element === 'earth' && sign2.element === 'fire')) base = 50;
+            else if ((sign1.element === 'fire' && sign2.element === 'water') || (sign1.element === 'water' && sign2.element === 'fire')) base = 40;
+            else if ((sign1.element === 'earth' && sign2.element === 'air') || (sign1.element === 'air' && sign2.element === 'earth')) base = 45;
+            else if ((sign1.element === 'air' && sign2.element === 'water') || (sign1.element === 'water' && sign2.element === 'air')) base = 55;
+            const variation = Math.floor(Math.random() * 10) - 5;
+            const percentage = Math.min(100, Math.max(20, base + variation));
+            return { percentage, text };
+        }
+
+        init();
+    </script>
+</body>
+</html>
+

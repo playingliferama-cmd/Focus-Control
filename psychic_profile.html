@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FOCUS — Профиль исполнителя</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .screen {
+            flex: 1;
+            padding: 12px 16px 10px 16px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            height: 100%;
+            overflow: hidden;
+            scrollbar-width: none;
+        }
+        .screen::-webkit-scrollbar { display: none; }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .back-btn {
+            font-size: 22px; cursor: pointer; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,215,0,0.08); border-radius: 30px;
+        }
+        .title {
+            font-size: 18px; font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .scroll-area::-webkit-scrollbar { display: none; }
+
+        .profile-card {
+            background: rgba(30,30,42,0.5);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+        }
+        .profile-name { font-size: 18px; font-weight: 700; color: #FFD966; }
+        .profile-rating { font-size: 14px; color: #FFD966; margin: 2px 0; }
+        .profile-cats { display: flex; gap: 4px; flex-wrap: wrap; margin: 4px 0; }
+        .cat-tag {
+            font-size: 10px;
+            background: rgba(255,215,0,0.1);
+            border: 0.5px solid rgba(255,215,0,0.15);
+            border-radius: 12px;
+            padding: 2px 8px;
+            color: #FFD966;
+        }
+        .profile-desc { font-size: 12px; color: #aaa; margin: 4px 0; }
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 0.5px solid rgba(255,255,255,0.05);
+        }
+        .service-name { font-size: 13px; color: #fff; }
+        .service-price { font-size: 12px; color: #FFD966; }
+
+        .textarea-input {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 0.5px solid rgba(255,215,0,0.2);
+            border-radius: 16px;
+            padding: 10px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            resize: none;
+            min-height: 80px;
+            margin: 6px 0;
+            font-family: inherit;
+        }
+        .textarea-input::placeholder { color: #6e6e7e; }
+
+        .radio-group {
+            display: flex;
+            gap: 12px;
+            margin: 6px 0;
+            flex-wrap: wrap;
+        }
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #aaa;
+            cursor: pointer;
+        }
+        .radio-item input[type="radio"] { accent-color: #FFD966; cursor: pointer; }
+
+        .btn-primary {
+            background: rgba(255,215,0,0.15);
+            border: 0.5px solid rgba(255,215,0,0.3);
+            border-radius: 30px;
+            padding: 10px;
+            text-align: center;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .btn-primary:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='fokus_oracle.html'">←</div>
+                <div class="title" id="profileTitle">🧙‍♂️ Профиль</div>
+            </div>
+
+            <div class="scroll-area">
+                <!-- Информация об исполнителе -->
+                <div class="profile-card" id="psychicInfo">
+                    <div class="profile-name" id="pName">Мария Таролог</div>
+                    <div class="profile-rating" id="pRating">⭐ 4.9 (128 отзывов)</div>
+                    <div class="profile-cats" id="pCats"></div>
+                    <div class="profile-desc" id="pDesc">Расклады Таро, астрология, отношения. Отвечаю за 24 часа.</div>
+                </div>
+
+                <!-- Услуги -->
+                <div class="profile-card">
+                    <div style="font-size: 13px; font-weight: 600; color: #FFD966; margin-bottom: 6px;">📋 УСЛУГИ</div>
+                    <div id="pServices"></div>
+                </div>
+
+                <!-- Форма заявки -->
+                <div class="profile-card">
+                    <div style="font-size: 13px; font-weight: 600; color: #FFD966; margin-bottom: 6px;">💬 Опишите вашу ситуацию</div>
+                    <textarea class="textarea-input" id="questionInput" placeholder="Напишите, что вас беспокоит..."></textarea>
+
+                    <div style="font-size: 12px; color: #aaa; margin: 4px 0;">📎 Способ ответа:</div>
+                    <div class="radio-group">
+                        <label class="radio-item"><input type="radio" name="answerType" value="text" checked> 📝 Текст</label>
+                        <label class="radio-item"><input type="radio" name="answerType" value="voice"> 🎤 Голосовое</label>
+                        <label class="radio-item"><input type="radio" name="answerType" value="photo"> 📷 Фото</label>
+                    </div>
+
+                    <div class="btn-primary" id="sendRequestBtn">📨 ОТПРАВИТЬ ЗАЯВКУ</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const psychicId = parseInt(urlParams.get('id')) || 1;
+
+        const psychics = {
+            1: {
+                id: 1,
+                name: 'Мария Таролог',
+                rating: 4.9,
+                reviews: 128,
+                categories: ['tarot', 'astrology'],
+                description: 'Расклады Таро, астрология, отношения. Отвечаю за 24 часа.',
+                services: [
+                    { name: 'Расклад "Что меня ждёт"', price: 500 },
+                    { name: 'Расклад "Отношения"', price: 350 }
+                ]
+            },
+            2: {
+                id: 2,
+                name: 'Анна Астролог',
+                rating: 4.7,
+                reviews: 95,
+                categories: ['astrology', 'numerology'],
+                description: 'Натальные карты, прогнозы, совместимость.',
+                services: [
+                    { name: 'Натальная карта', price: 600 },
+                    { name: 'Гороскоп на месяц', price: 400 }
+                ]
+            },
+            3: {
+                id: 3,
+                name: 'Виктория Нумеролог',
+                rating: 4.5,
+                reviews: 67,
+                categories: ['numerology'],
+                description: 'Числа судьбы, миссия, таланты.',
+                services: [
+                    { name: 'Расчёт числа судьбы', price: 300 },
+                    { name: 'Совместимость по числам', price: 400 }
+                ]
+            },
+            4: {
+                id: 4,
+                name: 'Сергей Рунолог',
+                rating: 4.8,
+                reviews: 43,
+                categories: ['runes', 'shaman'],
+                description: 'Руны, шаманские практики, защита.',
+                services: [
+                    { name: 'Расклад на рунах', price: 450 },
+                    { name: 'Шаманская диагностика', price: 600 }
+                ]
+            }
+        };
+
+        const categoryLabels = {
+            tarot: 'Таролог',
+            astrology: 'Астролог',
+            numerology: 'Нумеролог',
+            lead_pour: 'Отлив свинцом',
+            runes: 'Рунолог',
+            palmistry: 'Хиромант',
+            clairvoyant: 'Ясновидящий',
+            shaman: 'Шаман'
+        };
+
+        const psychic = psychics[psychicId] || psychics[1];
+
+        document.getElementById('pName').innerText = psychic.name;
+        document.getElementById('pRating').innerHTML = `⭐ ${psychic.rating} (${psychic.reviews} отзывов)`;
+        document.getElementById('pDesc').innerText = psychic.description;
+        document.getElementById('profileTitle').innerHTML = `🧙‍♂️ ${psychic.name}`;
+
+        const catsContainer = document.getElementById('pCats');
+        psychic.categories.forEach(cat => {
+            const tag = document.createElement('span');
+            tag.className = 'cat-tag';
+            tag.innerText = categoryLabels[cat] || cat;
+            catsContainer.appendChild(tag);
+        });
+
+        const servicesContainer = document.getElementById('pServices');
+        psychic.services.forEach(s => {
+            const div = document.createElement('div');
+            div.className = 'service-item';
+            div.innerHTML = `<span class="service-name">${s.name}</span><span class="service-price">💰 ${s.price} монет</span>`;
+            servicesContainer.appendChild(div);
+        });
+
+        document.getElementById('sendRequestBtn').addEventListener('click', function() {
+            const question = document.getElementById('questionInput').value.trim();
+            if (!question) {
+                alert('❌ Опишите вашу ситуацию');
+                return;
+            }
+            const answerType = document.querySelector('input[name="answerType"]:checked').value;
+            const requests = JSON.parse(localStorage.getItem('focus_oracle_requests') || '[]');
+            requests.push({
+                id: Date.now(),
+                psychicId: psychic.id,
+                psychicName: psychic.name,
+                question: question,
+                answerType: answerType,
+                status: 'pending',
+                price: null,
+                preliminaryAnswer: null,
+                createdAt: new Date().toISOString()
+            });
+            localStorage.setItem('focus_oracle_requests', JSON.stringify(requests));
+            alert('✅ Заявка отправлена! Ожидайте ответа от исполнителя.');
+            window.location.href = 'fokus_oracle.html';
+        });
+    </script>
+</body>
+</html>

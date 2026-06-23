@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Пригласить друга — FOCUS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .phone {
+            width: 375px;
+            height: 700px;
+            background: #111117;
+            border-radius: 52px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #1c1c24, 0 0 0 12px #2c2c34;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            background: #111117;
+            overflow-y: hidden;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .back-btn {
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 30px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 4px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .qr-card {
+            background: rgba(30, 30, 42, 0.5);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .qr-code {
+            width: 140px;
+            height: 140px;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .qr-code svg {
+            width: 120px;
+            height: 120px;
+        }
+
+        .invite-link {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            padding: 8px 12px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .link-text {
+            color: #FFD966;
+            font-size: 11px;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 0.5px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 10px;
+            color: #FFD966;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .share-btn {
+            background: rgba(255, 215, 0, 0.08);
+            border: 0.5px solid rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            padding: 10px;
+            font-size: 14px;
+            color: #FFD966;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .info-text {
+            text-align: center;
+            font-size: 10px;
+            color: #8e8e9e;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="screen">
+            <div class="header">
+                <div class="back-btn" onclick="location.href='dashboard.html'">←</div>
+                <div class="title">Пригласить друга</div>
+            </div>
+
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g stroke="#FFD966" stroke-width="0.8" stroke-linecap="round" opacity="0.4">
+                            <line x1="50" y1="10" x2="50" y2="20" />
+                            <line x1="50" y1="80" x2="50" y2="90" />
+                            <line x1="10" y1="50" x2="20" y2="50" />
+                            <line x1="80" y1="50" x2="90" y2="50" />
+                            <line x1="22" y1="22" x2="29" y2="29" />
+                            <line x1="71" y1="71" x2="78" y2="78" />
+                            <line x1="22" y1="78" x2="29" y2="71" />
+                            <line x1="71" y1="29" x2="78" y2="22" />
+                        </g>
+                        <circle cx="50" cy="50" r="28" stroke="#FFD966" stroke-width="1.2" fill="none" opacity="0.6"/>
+                        <circle cx="50" cy="50" r="22" stroke="#FFD966" stroke-width="0.6" fill="none" opacity="0.3"/>
+                        <path d="M40 48 Q46 43 50 43 Q54 43 60 48 Q54 55 50 55 Q46 55 40 48 Z" fill="#FFD966" fill-opacity="0.15" stroke="#FFD966" stroke-width="1"/>
+                        <circle cx="50" cy="49" r="3.5" fill="#FFD966" fill-opacity="0.5"/>
+                        <circle cx="50" cy="49" r="1.2" fill="#FFFFFF"/>
+                    </svg>
+                </div>
+                <div class="logo-text">FOCUS</div>
+            </div>
+
+            <div class="qr-card">
+                <div class="qr-code" id="qrCode">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="120" height="120" fill="#FFFFFF"/>
+                        <rect x="15" y="15" width="15" height="15" fill="#000000"/>
+                        <rect x="35" y="15" width="15" height="15" fill="#000000"/>
+                        <rect x="55" y="15" width="15" height="15" fill="#000000"/>
+                        <rect x="75" y="15" width="15" height="15" fill="#000000"/>
+                        <rect x="90" y="15" width="15" height="15" fill="#000000"/>
+                        <rect x="15" y="35" width="15" height="15" fill="#000000"/>
+                        <rect x="55" y="35" width="15" height="15" fill="#000000"/>
+                        <rect x="90" y="35" width="15" height="15" fill="#000000"/>
+                        <rect x="15" y="55" width="15" height="15" fill="#000000"/>
+                        <rect x="35" y="55" width="15" height="15" fill="#000000"/>
+                        <rect x="55" y="55" width="15" height="15" fill="#000000"/>
+                        <rect x="75" y="55" width="15" height="15" fill="#000000"/>
+                        <rect x="90" y="55" width="15" height="15" fill="#000000"/>
+                        <rect x="15" y="75" width="15" height="15" fill="#000000"/>
+                        <rect x="55" y="75" width="15" height="15" fill="#000000"/>
+                        <rect x="90" y="75" width="15" height="15" fill="#000000"/>
+                        <rect x="15" y="90" width="15" height="15" fill="#000000"/>
+                        <rect x="35" y="90" width="15" height="15" fill="#000000"/>
+                        <rect x="55" y="90" width="15" height="15" fill="#000000"/>
+                        <rect x="75" y="90" width="15" height="15" fill="#000000"/>
+                        <rect x="90" y="90" width="15" height="15" fill="#000000"/>
+                        <rect x="35" y="75" width="15" height="15" fill="#000000"/>
+                        <rect x="75" y="35" width="15" height="15" fill="#000000"/>
+                    </svg>
+                </div>
+                <div class="invite-link">
+                    <div class="link-text" id="inviteLink">https://focus.app/invite/ABC123</div>
+                </div>
+                <div class="copy-btn" id="copyBtn">📋 КОПИРОВАТЬ ССЫЛКУ</div>
+                <div class="share-btn" id="shareBtn">📤 ОТПРАВИТЬ ССЫЛКУ</div>
+            </div>
+
+            <div class="info-text">
+                Друг переходит по ссылке или сканирует QR-код → скачивает приложение → регистрируется
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let friendCode = localStorage.getItem('focus_friend_code');
+        if (!friendCode) {
+            friendCode = 'ABC' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            localStorage.setItem('focus_friend_code', friendCode);
+        }
+
+        const inviteLink = `https://focus.app/invite/${friendCode}`;
+        document.getElementById('inviteLink').innerHTML = inviteLink;
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(inviteLink);
+            alert('Ссылка скопирована!');
+        });
+
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'FOCUS',
+                    text: 'Присоединяйся к FOCUS!',
+                    url: inviteLink
+                }).catch(() => {
+                    alert('Поделиться не удалось');
+                });
+            } else {
+                alert('Ваш браузер не поддерживает функцию "Поделиться"\nСсылка: ' + inviteLink);
+            }
+        });
+    </script>
+</body>
+</html>
