@@ -54,7 +54,15 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 30px;
+            transition: 0.3s ease;
         }
+        .logo-left:hover {
+            background: rgba(255,215,0,0.05);
+        }
+        .logo-left:active { transform: scale(0.97); }
         .logo-svg { width: 40px; height: 40px; display: block; }
         .app-name {
             font-size: 22px;
@@ -65,7 +73,7 @@
             color: transparent;
         }
 
-        /* ===== ОРАКУЛ (пирамида с глазом) ===== */
+        /* ===== ПИРАМИДА (ОРАКУЛ) ===== */
         .oracle-trigger {
             display: flex;
             align-items: center;
@@ -85,11 +93,7 @@
             border-color: #FFD966;
             box-shadow: 0 0 20px rgba(255,215,0,0.2);
         }
-        .oracle-icon {
-            width: 28px;
-            height: 28px;
-            display: block;
-        }
+        .oracle-icon { width: 28px; height: 28px; display: block; }
         @keyframes glowPulse {
             0%, 100% { box-shadow: 0 0 8px rgba(255,215,0,0.2); }
             50% { box-shadow: 0 0 20px rgba(255,215,0,0.5); }
@@ -109,7 +113,12 @@
             flex-direction: column;
             gap: 10px;
             flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+            padding-bottom: 4px;
         }
+        .focus-grid::-webkit-scrollbar { display: none; }
+
         .focus-tile {
             background: rgba(30,30,42,0.5);
             border-radius: 18px;
@@ -119,8 +128,10 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            transition: 0.3s ease;
         }
         .focus-tile:active { transform: scale(0.98); }
+        .focus-tile.hidden-tile { display: none; }
         .tile-icon {
             font-size: 24px;
             width: 44px;
@@ -136,6 +147,7 @@
         .tile-subtitle { font-size: 10px; color: #8e8e9e; }
         .tile-arrow { font-size: 16px; color: #FFD966; opacity: 0.5; }
 
+        /* ===== НИЖНЕЕ МЕНЮ ===== */
         .tab-bar {
             display: flex;
             justify-content: space-around;
@@ -161,20 +173,148 @@
         }
         .tab-item.active { color: #ffd966; background: rgba(255,217,102,0.1); }
         .tab-icon { font-size: 18px; }
+
         .screen::-webkit-scrollbar { display: none; }
+
+        /* ===== МОДАЛКА НАСТРОЕК ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-content {
+            background: #1a1a24;
+            border-radius: 24px;
+            width: 320px;
+            padding: 20px;
+            border: 0.5px solid rgba(255,215,0,0.15);
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFD966;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .modal-sub {
+            font-size: 11px;
+            color: #8e8e9e;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .sphere-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: rgba(30,30,42,0.5);
+            border-radius: 12px;
+            margin-bottom: 6px;
+            border: 0.5px solid rgba(255,215,0,0.06);
+        }
+        .sphere-toggle .info { display: flex; align-items: center; gap: 8px; }
+        .sphere-toggle .name { font-size: 13px; font-weight: 500; color: #fff; }
+        .sphere-toggle .icon { font-size: 20px; }
+        .sphere-toggle .toggle {
+            width: 40px;
+            height: 22px;
+            background: #2a2a34;
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.3s ease;
+            border: 0.5px solid rgba(255,255,255,0.05);
+        }
+        .sphere-toggle .toggle.active {
+            background: rgba(255,215,0,0.3);
+            border-color: rgba(255,215,0,0.3);
+        }
+        .sphere-toggle .toggle .dot {
+            width: 16px;
+            height: 16px;
+            background: #6e6e7e;
+            border-radius: 30px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s ease;
+        }
+        .sphere-toggle .toggle.active .dot {
+            left: 20px;
+            background: #FFD966;
+        }
+
+        .modal-divider {
+            height: 0.5px;
+            background: rgba(255,215,0,0.1);
+            margin: 12px 0;
+        }
+
+        .modal-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 30px;
+            background: rgba(255,215,0,0.06);
+            border: 0.5px solid rgba(255,215,0,0.1);
+            color: #FFD966;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: 0.3s ease;
+            margin-top: 6px;
+        }
+        .modal-btn:hover { background: rgba(255,215,0,0.12); }
+        .modal-btn:active { transform: scale(0.97); }
+        .modal-btn.vip { 
+            background: rgba(255,215,0,0.12);
+            border-color: rgba(255,215,0,0.25);
+        }
+        .modal-btn .badge {
+            font-size: 8px;
+            background: rgba(255,215,0,0.2);
+            padding: 1px 8px;
+            border-radius: 20px;
+            color: #FFD966;
+        }
+
+        .modal-close {
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.04);
+            color: #8e8e9e;
+            cursor: pointer;
+            font-size: 13px;
+            border: 0.5px solid rgba(255,255,255,0.04);
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.08); }
     </style>
 </head>
 <body>
     <div class="phone">
         <div class="screen">
+            <!-- СТАТУС-БАР -->
             <div class="status-bar">
                 <span class="time">9:41</span>
                 <div class="status-icons"><span>📶</span> <span>📶</span> <span>🔋</span></div>
             </div>
 
-            <!-- Шапка: FOCUS слева, Оракул справа -->
+            <!-- ШАПКА: FOCUS (кликабельный) + ПИРАМИДА -->
             <div class="logo-section">
-                <div class="logo-left">
+                <div class="logo-left" id="logoTrigger">
                     <div class="logo-svg">
                         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g stroke="#FFD966" stroke-width="0.8" stroke-linecap="round" opacity="0.4">
@@ -201,7 +341,7 @@
                     <div class="app-name">FOCUS</div>
                 </div>
 
-                <!-- Пирамида с глазом (видимая, с золотым кругом) -->
+                <!-- ПИРАМИДА (ОРАКУЛ) -->
                 <div class="oracle-trigger" id="oracleTrigger">
                     <div class="oracle-icon">
                         <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -219,14 +359,15 @@
                 </div>
             </div>
 
+            <!-- ЦИТАТА -->
             <div class="quote-container" id="quoteContainer">
                 <div class="quote-text" id="quoteText">Загрузка...</div>
                 <div class="quote-author" id="quoteAuthor"></div>
             </div>
 
-            <!-- 6 сфер -->
-            <div class="focus-grid">
-                <div class="focus-tile" onclick="location.href='fokus_body.html'">
+            <!-- 6 СФЕР -->
+            <div class="focus-grid" id="focusGrid">
+                <div class="focus-tile" data-sphere="body" onclick="location.href='fokus_body.html'">
                     <div class="tile-icon">💪</div>
                     <div class="tile-info">
                         <div class="tile-title">Физическое тело</div>
@@ -235,7 +376,7 @@
                     <div class="tile-arrow">→</div>
                 </div>
 
-                <div class="focus-tile" onclick="location.href='fokus_mental.html'">
+                <div class="focus-tile" data-sphere="mental" onclick="location.href='fokus_mental.html'">
                     <div class="tile-icon">🧠</div>
                     <div class="tile-info">
                         <div class="tile-title">Ментальное здоровье</div>
@@ -244,7 +385,7 @@
                     <div class="tile-arrow">→</div>
                 </div>
 
-                <div class="focus-tile" onclick="location.href='fokus_energy.html'">
+                <div class="focus-tile" data-sphere="energy" onclick="location.href='fokus_energy.html'">
                     <div class="tile-icon">⚡</div>
                     <div class="tile-info">
                         <div class="tile-title">Энергия</div>
@@ -253,7 +394,7 @@
                     <div class="tile-arrow">→</div>
                 </div>
 
-                <div class="focus-tile" onclick="location.href='fokus_relationships.html'">
+                <div class="focus-tile" data-sphere="relations" onclick="location.href='fokus_relationships.html'">
                     <div class="tile-icon">👥</div>
                     <div class="tile-info">
                         <div class="tile-title">Отношения</div>
@@ -262,7 +403,7 @@
                     <div class="tile-arrow">→</div>
                 </div>
 
-                <div class="focus-tile" onclick="location.href='fokus_faith.html'">
+                <div class="focus-tile" data-sphere="faith" onclick="location.href='fokus_faith.html'">
                     <div class="tile-icon">🔥</div>
                     <div class="tile-info">
                         <div class="tile-title">Вера и ритуалы</div>
@@ -271,7 +412,7 @@
                     <div class="tile-arrow">→</div>
                 </div>
 
-                <div class="focus-tile" onclick="location.href='fokus_reward.html'">
+                <div class="focus-tile" data-sphere="reward" onclick="location.href='fokus_reward.html'">
                     <div class="tile-icon">🎁</div>
                     <div class="tile-info">
                         <div class="tile-title">Поощрение</div>
@@ -281,7 +422,7 @@
                 </div>
             </div>
 
-            <!-- Нижнее меню -->
+            <!-- НИЖНЕЕ МЕНЮ -->
             <div class="tab-bar">
                 <div class="tab-item" onclick="location.href='fokus_progress.html'">
                     <span class="tab-icon">📈</span>
@@ -296,6 +437,25 @@
                     <span>Профиль</span>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА НАСТРОЕК (открывается по логотипу) -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-title">⚙️ Настройки</div>
+            <div class="modal-sub">Включи или отключи нужные сферы</div>
+            <div id="sphereToggles"></div>
+
+            <div class="modal-divider"></div>
+
+            <!-- РОДИТЕЛЬСКИЙ КОНТРОЛЬ -->
+            <div class="modal-btn" id="parentalControlBtn">
+                🛡️ Родительский контроль
+                <span class="badge">VIP</span>
+            </div>
+
+            <div class="modal-close" id="closeSettingsBtn">✔️ Готово</div>
         </div>
     </div>
 
@@ -323,25 +483,116 @@
             window.location.href = 'oracle_menu.html';
         });
 
+        // ===== ОТКРЫТИЕ МОДАЛКИ ПО ЛОГОТИПУ =====
+        document.getElementById('logoTrigger').addEventListener('click', function() {
+            document.getElementById('settingsModal').classList.add('show');
+            loadSphereSettings();
+            checkVipStatus();
+        });
+
+        // ===== ЗАКРЫТИЕ МОДАЛКИ =====
+        document.getElementById('closeSettingsBtn').addEventListener('click', function() {
+            document.getElementById('settingsModal').classList.remove('show');
+        });
+        document.getElementById('settingsModal').addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('show');
+        });
+
         // ===== НАСТРОЙКА ВИДИМОСТИ СФЕР =====
+        const allSpheres = [
+            { id: 'body', name: 'Физическое тело', icon: '💪' },
+            { id: 'mental', name: 'Ментальное здоровье', icon: '🧠' },
+            { id: 'energy', name: 'Энергия', icon: '⚡' },
+            { id: 'relations', name: 'Отношения', icon: '👥' },
+            { id: 'faith', name: 'Вера и ритуалы', icon: '🔥' },
+            { id: 'reward', name: 'Поощрение', icon: '🎁' }
+        ];
+
         function loadSphereSettings() {
             const saved = localStorage.getItem('focus_active_spheres');
-            let active = ['body', 'mental', 'energy', 'relations', 'faith', 'reward'];
+            let active = allSpheres.map(s => s.id);
             if (saved) {
                 try {
-                    active = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        active = parsed;
+                    }
                 } catch(e) {}
             }
+            updateTiles(active);
+            updateToggles(active);
+            return active;
+        }
+
+        function updateTiles(active) {
             document.querySelectorAll('.focus-tile[data-sphere]').forEach(tile => {
                 const sphere = tile.dataset.sphere;
                 if (active.includes(sphere)) {
-                    tile.style.display = 'flex';
+                    tile.classList.remove('hidden-tile');
                 } else {
-                    tile.style.display = 'none';
+                    tile.classList.add('hidden-tile');
                 }
             });
         }
 
+        function updateToggles(active) {
+            const container = document.getElementById('sphereToggles');
+            container.innerHTML = '';
+            allSpheres.forEach(s => {
+                const isActive = active.includes(s.id);
+                const div = document.createElement('div');
+                div.className = 'sphere-toggle';
+                div.innerHTML = `
+                    <div class="info">
+                        <span class="icon">${s.icon}</span>
+                        <span class="name">${s.name}</span>
+                    </div>
+                    <div class="toggle ${isActive ? 'active' : ''}" data-sphere="${s.id}">
+                        <div class="dot"></div>
+                    </div>
+                `;
+                const toggle = div.querySelector('.toggle');
+                toggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    this.classList.toggle('active');
+                    const sphereId = this.dataset.sphere;
+                    let current = JSON.parse(localStorage.getItem('focus_active_spheres') || JSON.stringify(allSpheres.map(s => s.id)));
+                    if (this.classList.contains('active')) {
+                        if (!current.includes(sphereId)) current.push(sphereId);
+                    } else {
+                        current = current.filter(id => id !== sphereId);
+                    }
+                    localStorage.setItem('focus_active_spheres', JSON.stringify(current));
+                    updateTiles(current);
+                });
+                container.appendChild(div);
+            });
+        }
+
+        // ===== РОДИТЕЛЬСКИЙ КОНТРОЛЬ =====
+        function checkVipStatus() {
+            const sub = localStorage.getItem('focus_subscription') || 'free';
+            const btn = document.getElementById('parentalControlBtn');
+            if (sub === 'vip' || sub === 'elite') {
+                btn.classList.add('vip');
+                btn.innerHTML = '🛡️ Родительский контроль <span class="badge">VIP ✓</span>';
+            } else {
+                btn.classList.remove('vip');
+                btn.innerHTML = '🛡️ Родительский контроль <span class="badge">VIP</span>';
+            }
+        }
+
+        document.getElementById('parentalControlBtn').addEventListener('click', function() {
+            const subscription = localStorage.getItem('focus_subscription') || 'free';
+            if (subscription === 'vip' || subscription === 'elite') {
+                document.getElementById('settingsModal').classList.remove('show');
+                window.location.href = 'parental_control.html';
+            } else {
+                alert('🛡️ Родительский контроль доступен только по VIP-подписке.\nОформите подписку в разделе "Профиль" → "Подписка".');
+            }
+        });
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
         loadSphereSettings();
     </script>
 </body>
